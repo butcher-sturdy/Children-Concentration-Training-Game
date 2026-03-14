@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://bkb0u7pmn8ug7"]
+
+[sub_resource type="GDScript" id="GDScript_24cec"]
+script/source = "
+
+	
+	
+"
+
+[node name="killzone" type="Area2D"]
+script = SubResource("GDScript_24cec")
