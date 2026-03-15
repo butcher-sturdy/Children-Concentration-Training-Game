@@ -1,0 +1,34 @@
+[gd_scene load_steps=7 format=3 uid="uid://2jl8e6ikvkr4"]
+
+[ext_resource type="Texture2D" uid="uid://cdeihbw7n5uy0" path="res://asset/Tiles/Assets/Background_2.png" id="1_v6wbo"]
+[ext_resource type="Texture2D" uid="uid://bce5wak272qs6" path="res://element/texture/startbutton.tres" id="2_e78e5"]
+[ext_resource type="Texture2D" uid="uid://b7rncnga5nh58" path="res://asset/3/Sprite sheets/UI Big Play Button.png" id="3_87dkl"]
+[ext_resource type="Script" uid="uid://dpa2teukjyrqs" path="res://script/start_button.gd" id="4_87dkl"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xvkw3"]
+atlas = ExtResource("2_e78e5")
+region = Rect2(3, 34, 90, 27)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7gq1g"]
+atlas = ExtResource("3_87dkl")
+region = Rect2(99, 36, 90, 25)
+
+[node name="title" type="Node2D"]
+
+[node name="Background2" type="Sprite2D" parent="."]
+position = Vector2(1499.0001, 570)
+scale = Vector2(4.147, 4.147)
+texture = ExtResource("1_v6wbo")
+offset = Vector2(-113.466156, -1.448761)
+
+[node name="start_button" type="TextureButton" parent="."]
+offset_left = 622.0
+offset_top = 403.0
+offset_right = 1299.0
+offset_bottom = 677.0
+texture_normal = SubResource("AtlasTexture_xvkw3")
+texture_pressed = SubResource("AtlasTexture_7gq1g")
+stretch_mode = 4
+script = ExtResource("4_87dkl")
+
+[connection signal="pressed" from="start_button" to="start_button" method="start_game"]
