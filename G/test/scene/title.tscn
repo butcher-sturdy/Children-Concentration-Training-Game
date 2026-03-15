@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://2jl8e6ikvkr4"]
+[gd_scene load_steps=8 format=3 uid="uid://2jl8e6ikvkr4"]
 
 [ext_resource type="Texture2D" uid="uid://cdeihbw7n5uy0" path="res://asset/Tiles/Assets/Background_2.png" id="1_v6wbo"]
 [ext_resource type="Texture2D" uid="uid://bce5wak272qs6" path="res://element/texture/startbutton.tres" id="2_e78e5"]
 [ext_resource type="Texture2D" uid="uid://b7rncnga5nh58" path="res://asset/3/Sprite sheets/UI Big Play Button.png" id="3_87dkl"]
 [ext_resource type="Script" uid="uid://dpa2teukjyrqs" path="res://script/start_button.gd" id="4_87dkl"]
+[ext_resource type="PackedScene" uid="uid://dh0b6h85og3xx" path="res://main_scene/bridge_build.tscn" id="5_xvkw3"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xvkw3"]
 atlas = ExtResource("2_e78e5")
@@ -30,5 +31,6 @@ texture_normal = SubResource("AtlasTexture_xvkw3")
 texture_pressed = SubResource("AtlasTexture_7gq1g")
 stretch_mode = 4
 script = ExtResource("4_87dkl")
+catalogue = ExtResource("5_xvkw3")
 
 [connection signal="pressed" from="start_button" to="start_button" method="start_game"]
