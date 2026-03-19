@@ -29,6 +29,7 @@ platform_texture = ExtResource("3_jlxd5")
 [node name="player" parent="." instance=ExtResource("5_kqr3y")]
 position = Vector2(179, 594)
 scale = Vector2(4, 4)
+is_auto_run = false
 
 [node name="killzone" type="Area2D" parent="."]
 script = ExtResource("6_00tmn")

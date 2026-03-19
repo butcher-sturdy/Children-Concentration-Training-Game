@@ -1,41 +1,43 @@
-[gd_scene load_steps=7 format=3 uid="uid://b883svimoldgy"]
+[gd_scene load_steps=7 format=3 uid="uid://br1iairr4w4s4"]
 
-[ext_resource type="Script" uid="uid://dem1ql73r6ndm" path="res://script/reset.gd" id="1_0mklw"]
-[ext_resource type="PackedScene" uid="uid://67lx67qde6bg" path="res://test/scene/backgroud/parkourmap.tscn" id="2_rhp4e"]
-[ext_resource type="PackedScene" uid="uid://y2gqxd608apx" path="res://element/gizmo/obstacle_1.tscn" id="3_umfdr"]
-[ext_resource type="PackedScene" uid="uid://bqto2rpedhcgp" path="res://element/character/player_parkour.tscn" id="4_x61lg"]
-[ext_resource type="Script" uid="uid://dpckkk4typb5t" path="res://script/label.gd" id="5_6yxfj"]
+[ext_resource type="Script" uid="uid://dem1ql73r6ndm" path="res://script/reset.gd" id="1_5gf4s"]
+[ext_resource type="PackedScene" uid="uid://67lx67qde6bg" path="res://test/scene/backgroud/parkourmap.tscn" id="1_tg4uq"]
+[ext_resource type="PackedScene" uid="uid://y2gqxd608apx" path="res://element/gizmo/obstacle_1.tscn" id="2_a2fn7"]
+[ext_resource type="PackedScene" uid="uid://bqto2rpedhcgp" path="res://element/character/player_parkour.tscn" id="3_cwatd"]
+[ext_resource type="Script" uid="uid://dpckkk4typb5t" path="res://script/label.gd" id="5_0mysn"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_cwatd"]
 distance = -365.0
 
 [node name="parkour" type="Node2D"]
-script = ExtResource("1_0mklw")
+script = ExtResource("1_5gf4s")
 
-[node name="parkourmap" parent="." instance=ExtResource("2_rhp4e")]
+[node name="parkourmap" parent="." instance=ExtResource("1_tg4uq")]
 position = Vector2(-12.711151, 62.35894)
 
 [node name="Node2D" type="Node2D" parent="."]
 
-[node name="obstacle3" parent="Node2D" groups=["obstacle"] instance=ExtResource("3_umfdr")]
+[node name="obstacle3" parent="Node2D" groups=["obstacle"] instance=ExtResource("2_a2fn7")]
 position = Vector2(3681, 710)
 
-[node name="obstacle4" parent="Node2D" groups=["obstacle"] instance=ExtResource("3_umfdr")]
+[node name="obstacle4" parent="Node2D" groups=["obstacle"] instance=ExtResource("2_a2fn7")]
 position = Vector2(5133, 710)
 
-[node name="obstacle5" parent="Node2D" groups=["obstacle"] instance=ExtResource("3_umfdr")]
+[node name="obstacle5" parent="Node2D" groups=["obstacle"] instance=ExtResource("2_a2fn7")]
 position = Vector2(7043, 708)
 
-[node name="obstacle2" parent="Node2D" groups=["obstacle"] instance=ExtResource("3_umfdr")]
+[node name="obstacle1" parent="Node2D" groups=["obstacle"] instance=ExtResource("2_a2fn7")]
+position = Vector2(668, 714)
+
+[node name="obstacle2" parent="Node2D" groups=["obstacle"] instance=ExtResource("2_a2fn7")]
 position = Vector2(1918, 711)
 
-[node name="CharacterBody2D" parent="." instance=ExtResource("4_x61lg")]
+[node name="CharacterBody2D" parent="." instance=ExtResource("3_cwatd")]
 position = Vector2(404, 712)
 scale = Vector2(4, 4)
 collision_layer = 7
 collision_mask = 7
-fly_speed_multiplier = 3.0
-max_lives = 4
+is_auto_run = false
 
 [node name="Camera2D" type="Camera2D" parent="CharacterBody2D"]
 position = Vector2(0, -50)
@@ -47,7 +49,7 @@ offset_top = -103.5
 offset_right = 224.25
 offset_bottom = 81.5
 text = "生命值：3"
-script = ExtResource("5_6yxfj")
+script = ExtResource("5_0mysn")
 
 [node name="Area2D" type="Area2D" parent="."]
 position = Vector2(1362, 527)
@@ -58,6 +60,7 @@ shape = SubResource("WorldBoundaryShape2D_cwatd")
 [connection signal="body_entered" from="Node2D/obstacle3" to="CharacterBody2D" method="_on_body_entered"]
 [connection signal="body_entered" from="Node2D/obstacle4" to="CharacterBody2D" method="_on_body_entered"]
 [connection signal="body_entered" from="Node2D/obstacle5" to="CharacterBody2D" method="_on_body_entered"]
+[connection signal="body_entered" from="Node2D/obstacle1" to="CharacterBody2D" method="_on_body_entered"]
 [connection signal="body_entered" from="Node2D/obstacle2" to="CharacterBody2D" method="_on_body_entered"]
 [connection signal="life_changed" from="CharacterBody2D" to="CharacterBody2D/Camera2D/Label" method="_on_character_body_2d_life_changed"]
 [connection signal="body_entered" from="Area2D" to="CharacterBody2D" method="_on_killzone_body_entered"]

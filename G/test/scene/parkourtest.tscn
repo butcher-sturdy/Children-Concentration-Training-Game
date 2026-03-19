@@ -1,0 +1,33 @@
+[gd_scene load_steps=5 format=3 uid="uid://dwajv505bf4jb"]
+
+[ext_resource type="Texture2D" uid="uid://dgg1v2k1luiql" path="res://asset/1/sprites/platform.png" id="1_p0sqk"]
+[ext_resource type="PackedScene" uid="uid://bqto2rpedhcgp" path="res://element/character/player_parkour.tscn" id="2_p0sqk"]
+[ext_resource type="Texture2D" uid="uid://cdeihbw7n5uy0" path="res://asset/Tiles/Assets/Background_2.png" id="3_k526a"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_64yug"]
+distance = -13.0
+
+[node name="Node2D" type="Node2D"]
+
+[node name="StaticBody2D" type="StaticBody2D" parent="."]
+position = Vector2(881, 144)
+
+[node name="Sprite2D" type="Sprite2D" parent="StaticBody2D"]
+position = Vector2(167.99997, 402.99997)
+scale = Vector2(42.749996, 15.944445)
+texture = ExtResource("1_p0sqk")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="StaticBody2D"]
+position = Vector2(-44, 316)
+shape = SubResource("WorldBoundaryShape2D_64yug")
+
+[node name="CharacterBody2D" parent="." instance=ExtResource("2_p0sqk")]
+position = Vector2(731, 444)
+scale = Vector2(4, 4)
+
+[node name="Camera2D" type="Camera2D" parent="CharacterBody2D"]
+
+[node name="Background2" type="Sprite2D" parent="CharacterBody2D/Camera2D"]
+z_index = -1
+position = Vector2(-0.25, -2.75)
+texture = ExtResource("3_k526a")
