@@ -166,10 +166,10 @@ func _update_last_ground_position() -> void:
 	# 条件：1. 不在飞行状态 2. 检测到与地面接触（CharacterBody2D内置方法）
 	if not is_flying and is_on_floor():
 		# 仅当位置变化时更新（可选，减少冗余赋值）
-		if global_position != last_on_ground_position:
+		if global_position != last_on_ground_position: 
 			last_on_ground_position = global_position
 			# 可选：调试用，打印最后一次地面位置
-			print("最后一次地面位置更新：", last_on_ground_position)
+			#print("最后一次地面位置更新：", last_on_ground_position)
 # 原有死亡重置（killzone触发，保留）
 func _on_killzone_body_entered(body: Node2D) -> void:
 	if not is_hit_cooldown:
@@ -212,3 +212,13 @@ func pause_gravity_for_2_seconds():
 	
 	# 6. 必须将Timer添加到场景树（否则Timer不工作）
 	add_child(gravity_timer)
+	
+	
+func change_auto_run_mode()->void:
+	global_position = start_position
+	is_auto_run=!is_auto_run
+	
+func jump_to_subtitle(body: Node2D)->void:
+	if body.is_in_group("Player"):
+		print("到达终点")
+		get_tree().change_scene_to_file("res://main_scene/subtitle.tscn")

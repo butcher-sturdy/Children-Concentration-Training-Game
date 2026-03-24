@@ -1,12 +1,10 @@
-[gd_scene load_steps=10 format=3 uid="uid://du4jx8qiybqwe"]
+[gd_scene load_steps=8 format=3 uid="uid://du4jx8qiybqwe"]
 
 [ext_resource type="Texture2D" uid="uid://cdeihbw7n5uy0" path="res://asset/Tiles/Assets/Background_2.png" id="1_ccqf0"]
 [ext_resource type="Texture2D" uid="uid://bce5wak272qs6" path="res://element/texture/startbutton.tres" id="2_yvnk0"]
 [ext_resource type="Texture2D" uid="uid://b7rncnga5nh58" path="res://asset/3/Sprite sheets/UI Big Play Button.png" id="3_b25yk"]
 [ext_resource type="Script" uid="uid://cpvt10wpbr63v" path="res://script/start_button1.gd" id="4_reh6s"]
-[ext_resource type="PackedScene" uid="uid://dh0b6h85og3xx" path="res://main_scene/bridge_build.tscn" id="5_bhdyo"]
 [ext_resource type="Script" uid="uid://chp4yk0ngd7d5" path="res://script/start_button2.gd" id="6_b25yk"]
-[ext_resource type="PackedScene" uid="uid://b883svimoldgy" path="res://main_scene/parkour.tscn" id="7_s7n1r"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_xvkw3"]
 atlas = ExtResource("2_yvnk0")
@@ -24,7 +22,7 @@ scale = Vector2(4.147, 4.147)
 texture = ExtResource("1_ccqf0")
 offset = Vector2(-113.466156, -1.448761)
 
-[node name="start_button" type="TextureButton" parent="."]
+[node name="start_button1" type="TextureButton" parent="."]
 offset_left = 622.0
 offset_top = 403.0
 offset_right = 1299.0
@@ -33,7 +31,6 @@ texture_normal = SubResource("AtlasTexture_xvkw3")
 texture_pressed = SubResource("AtlasTexture_7gq1g")
 stretch_mode = 4
 script = ExtResource("4_reh6s")
-catalogue = ExtResource("5_bhdyo")
 
 [node name="start_button2" type="TextureButton" parent="."]
 offset_left = 622.0
@@ -44,7 +41,6 @@ texture_normal = SubResource("AtlasTexture_xvkw3")
 texture_pressed = SubResource("AtlasTexture_7gq1g")
 stretch_mode = 4
 script = ExtResource("6_b25yk")
-catalogue = ExtResource("7_s7n1r")
 
-[connection signal="pressed" from="start_button" to="start_button" method="start_game"]
+[connection signal="pressed" from="start_button1" to="start_button1" method="start_game"]
 [connection signal="pressed" from="start_button2" to="start_button2" method="start_game"]

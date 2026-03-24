@@ -1,7 +1,7 @@
 [gd_scene load_steps=10 format=3 uid="uid://duyqcw2lp560c"]
 
 [ext_resource type="Script" uid="uid://wwdlrjf72ui" path="res://script/platform_spawn.gd" id="1_8uth6"]
-[ext_resource type="PackedScene" uid="uid://b8o15s1r510ao" path="res://test/scene/backgroud/bridgebuildingmap.tscn" id="1_qtowd"]
+[ext_resource type="PackedScene" uid="uid://b8o15s1r510ao" path="res://test/scene/backgroud/bridgebuildingmap1.tscn" id="1_qtowd"]
 [ext_resource type="PackedScene" uid="uid://dsyp5dwl31weq" path="res://element/gizmo/platform.tscn" id="2_72ppq"]
 [ext_resource type="Texture2D" uid="uid://dgg1v2k1luiql" path="res://asset/1/sprites/platform.png" id="3_h01ie"]
 [ext_resource type="PackedScene" uid="uid://485ti8070ud4" path="res://element/character/player.tscn" id="5_anybp"]

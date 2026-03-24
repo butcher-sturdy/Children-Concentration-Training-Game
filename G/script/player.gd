@@ -77,5 +77,15 @@ func _ready() -> void:
 # 响应 KillZone 信号的方法
 func _on_killzone_body_entered(body: Node2D) -> void:
 	global_position = start_position
+	is_auto_run=false
 	velocity = Vector2.ZERO
 	print("玩家返回初始位置！")
+	
+func change_auto_run_mode()->void:
+	global_position = start_position
+	is_auto_run=!is_auto_run
+	
+func jump_to_subtitle(body: Node2D)->void:
+	if body.is_in_group("Player"):
+		print("到达终点")
+		get_tree().change_scene_to_file("res://main_scene/subtitle.tscn")
