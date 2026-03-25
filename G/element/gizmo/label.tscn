@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6v21g80757jk"]
+
+[ext_resource type="Script" uid="uid://dpckkk4typb5t" path="res://script/label.gd" id="1_hqrit"]
+
+[node name="Label" type="Label"]
+offset_left = -183.75
+offset_top = -103.5
+offset_right = 224.25
+offset_bottom = 81.5
+text = "生命值：3"
+script = ExtResource("1_hqrit")

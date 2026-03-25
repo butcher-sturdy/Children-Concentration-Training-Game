@@ -14,7 +14,7 @@ func _ready():
 func _on_player_enter(body: Node2D):
 	if not has_triggered and body.is_in_group("Player"):
 		has_triggered = true
-		# ✅ 正确写法：先移动到终点 → 完成后自动返回
+		# 先移动到终点 → 完成后自动返回
 		move_platform(end_position, move_duration)
 
 # 修复：接收 目标位置 + 时长 参数

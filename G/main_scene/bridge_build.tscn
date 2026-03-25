@@ -14,11 +14,13 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_e1nlc"]
 size = Vector2(1372, 237.5)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_n0yk2"]
-size = Vector2(77, 1355)
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_j25py"]
+normal = Vector2(-1, 0)
+distance = 4.0
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_qyruj"]
-size = Vector2(103, 1343)
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_smppe"]
+normal = Vector2(1, 0)
+distance = -107.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u7nuu"]
 size = Vector2(39.75, 38.75)
@@ -73,15 +75,15 @@ shape = SubResource("RectangleShape2D_e1nlc")
 script = ExtResource("6_00tmn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="killzone2"]
-position = Vector2(-53, 647)
-shape = SubResource("RectangleShape2D_n0yk2")
+position = Vector2(0, 644)
+shape = SubResource("WorldBoundaryShape2D_j25py")
 
 [node name="killzone3" type="Area2D" parent="."]
 script = ExtResource("6_00tmn")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="killzone3"]
 position = Vector2(2040, 613)
-shape = SubResource("RectangleShape2D_qyruj")
+shape = SubResource("WorldBoundaryShape2D_smppe")
 
 [node name="Control" parent="." instance=ExtResource("7_i70yj")]
 offset_left = 99.0
@@ -101,7 +103,7 @@ start_position = Vector2(755, 877)
 end_position = Vector2(755, 545)
 
 [node name="flag" parent="." instance=ExtResource("10_j25py")]
-position = Vector2(1732, 709)
+position = Vector2(1725, 713)
 
 [connection signal="body_entered" from="killzone" to="player" method="_on_killzone_body_entered"]
 [connection signal="body_entered" from="killzone2" to="player" method="_on_killzone_body_entered"]

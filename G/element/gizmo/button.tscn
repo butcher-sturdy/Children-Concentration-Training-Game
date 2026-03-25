@@ -5,7 +5,7 @@
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_8bqhh"]
 atlas = ExtResource("2_nu0ln")
-region = Rect2(806, 7, 18, 18)
+region = Rect2(869, 70, 22, 22)
 
 [node name="Control" type="TextureButton"]
 anchors_preset = 15

@@ -80,7 +80,7 @@ func _on_killzone_body_entered(body: Node2D) -> void:
 	is_auto_run=false
 	velocity = Vector2.ZERO
 	print("玩家返回初始位置！")
-	
+	 
 func change_auto_run_mode()->void:
 	global_position = start_position
 	is_auto_run=!is_auto_run
