@@ -1,0 +1,4 @@
+[gd_scene format=3 uid="uid://bca4q8sh1bbl8"]
+
+[node name="Node2D" type="Node2D"]
+metadata/_edit_group_ = true
