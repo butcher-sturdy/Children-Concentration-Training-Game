@@ -1,8 +1,7 @@
 extends Node
 
-# 核心数据：专注度 + 调整步长（灵敏度）
-@export var focus_level: float = 0.0          # 专注度（0-100%）
-@export var focus_step: float = 1.0           # 每次调整的步长（替代之前的scroll_sensitivity）
+@export var focus_level: float = 0.0          
+@export var focus_step: float = 1.0          
 
 # 安全修改专注度（限制0-100范围）
 func set_focus_level(value: float) -> void:

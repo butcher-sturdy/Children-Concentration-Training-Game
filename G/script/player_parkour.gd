@@ -3,7 +3,7 @@ extends CharacterBody2D
 # 基础移动/跳跃配置
 @export var move_speed: float = 300.0
 @export var jump_force: float = -800.0
-@export var gravity: float = 1800.0
+@export var gravity: float = 1800.0   
 @export var is_auto_run: bool = true
 
 # 专注度相关阈值（Player自主配置）
@@ -11,7 +11,6 @@ extends CharacterBody2D
 @export var fly_threshold: float = 75.0         # 飞行阈值
 @export var fly_speed_multiplier: float = 1.5   # 飞行速度倍数
 
-# ========== 新增：生命值配置（可在编辑器修改） ==========
 @export var max_lives: int = 3                  # 最大命数（默认3条）
 var current_lives: int                        # 当前剩余命数
 @export var hit_cooldown: float = 1.0           # 碰撞冷却（避免重复扣血，默认1秒）
