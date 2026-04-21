@@ -5,7 +5,7 @@ extends CharacterBody2D
 @export var jump_force: float = -600.0  # Y轴向下，负数向上跳
 @export var gravity: float = 1800.0
 @export var is_auto_run: bool = true  # 新增：自动向右跑开关（默认开启）
-
+@export var air_damping: float = 1
 # 引用AnimatedSprite2D子节点（名称匹配）
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
 
@@ -15,16 +15,17 @@ func _physics_process(delta: float) -> void:
 	# 1. 处理重力（使用CharacterBody2D内置velocity）
 	if not is_on_floor():
 		velocity.y += gravity * delta
+		velocity.x = lerp(velocity.x, 0.0, air_damping * delta)
 	else:
 		velocity.y = 0.0  # 地面清零垂直速度，避免叠加
 
-	# 2. 处理水平移动【核心修改：自动向右跑】
-	if is_auto_run:
-		velocity.x = move_speed  # 固定向右跑，无需手动输入
-	else:
-		# 保留手动控制逻辑（关闭自动跑时可用）
-		var input_dir: float = Input.get_axis("move_left", "move_right")
-		velocity.x = input_dir * move_speed
+	if is_on_floor():
+		if is_auto_run:
+			velocity.x = move_speed  # 地面自动跑
+		else:
+			# 保留手动控制逻辑（关闭自动跑时可用）
+			var input_dir: float = Input.get_axis("move_left", "move_right")
+			velocity.x = input_dir * move_speed
 
 	# 3. 处理跳跃（仅地面可跳）
 	if Input.is_action_just_pressed("jump") and is_on_floor():
@@ -89,3 +90,14 @@ func jump_to_subtitle(body: Node2D)->void:
 	if body.is_in_group("Player"):
 		print("到达终点")
 		get_tree().change_scene_to_file("res://main_scene/subtitle.tscn")
+
+func halt_running(body: CharacterBody2D)->void:
+	is_auto_run=false
+	print("stop")
+func continue_running(body: CharacterBody2D)->void:
+	is_auto_run=true
+	print("continue")
+
+
+func _on_elevator_platform_arrived(body: CharacterBody2D) -> void:
+	pass # Replace with function body.

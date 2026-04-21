@@ -131,7 +131,7 @@ func update_animation(input_dir: float) -> void:
 			animated_sprite.frame = 0
 			animated_sprite.play()
 
-# ========== 新增：碰撞障碍物扣血逻辑 ==========
+# ========== 碰撞障碍物扣血逻辑 ==========
 func _on_body_entered(body: Node2D) -> void:
 	# 扣血条件：碰撞障碍物 + 非无敌 + 不在冷却中
 	if not is_invincible and not is_hit_cooldown:
@@ -142,7 +142,7 @@ func _on_body_entered(body: Node2D) -> void:
 		# 命数扣完 → 重置游戏
 		
 
-# ========== 新增：游戏重置逻辑（命数扣完时调用） ==========
+# ========== 游戏重置逻辑（命数扣完时调用） ==========
 func reset_game() -> void:
 	print("命数耗尽！重新开始游戏...")
 	# 1. 重置玩家位置和速度

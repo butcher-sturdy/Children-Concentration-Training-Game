@@ -1,0 +1,144 @@
+[gd_scene load_steps=21 format=3 uid="uid://fqr8kasblr7w"]
+
+[ext_resource type="Script" uid="uid://bagwk26amyd84" path="res://script/orc.gd" id="1_cnn78"]
+[ext_resource type="Texture2D" uid="uid://v3be1uhsn8sd" path="res://asset/2/Characters/Orc/Orc/Orc-Idle.png" id="1_mmqt6"]
+[ext_resource type="Texture2D" uid="uid://s5b0jnd0obc8" path="res://asset/2/Characters/Orc/Orc/Orc-Walk.png" id="2_cnn78"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_th0p4"]
+size = Vector2(22, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mmqt6"]
+atlas = ExtResource("1_mmqt6")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cnn78"]
+atlas = ExtResource("1_mmqt6")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5eoq4"]
+atlas = ExtResource("1_mmqt6")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_un5bx"]
+atlas = ExtResource("1_mmqt6")
+region = Rect2(300, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ivy7y"]
+atlas = ExtResource("1_mmqt6")
+region = Rect2(400, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_knmgx"]
+atlas = ExtResource("1_mmqt6")
+region = Rect2(500, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_eafpv"]
+atlas = ExtResource("2_cnn78")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rlfeu"]
+atlas = ExtResource("2_cnn78")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v3dux"]
+atlas = ExtResource("2_cnn78")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_58pns"]
+atlas = ExtResource("2_cnn78")
+region = Rect2(300, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k3t5x"]
+atlas = ExtResource("2_cnn78")
+region = Rect2(400, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_v8stl"]
+atlas = ExtResource("2_cnn78")
+region = Rect2(500, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_seqq2"]
+atlas = ExtResource("2_cnn78")
+region = Rect2(600, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rw7xb"]
+atlas = ExtResource("2_cnn78")
+region = Rect2(700, 0, 100, 100)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4iiwu"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mmqt6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cnn78")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5eoq4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_un5bx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ivy7y")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_knmgx")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_eafpv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rlfeu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v3dux")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_58pns")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k3t5x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_v8stl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_seqq2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rw7xb")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cnn78"]
+size = Vector2(22.25, 15)
+
+[node name="Orc" type="AnimatableBody2D"]
+scale = Vector2(4, 4)
+script = ExtResource("1_cnn78")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(4.75, -0.5)
+shape = SubResource("RectangleShape2D_th0p4")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_4iiwu")
+animation = &"walk"
+
+[node name="Area2D" type="Area2D" parent="."]
+collision_layer = 2
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(4.625, -0.75)
+shape = SubResource("RectangleShape2D_cnn78")
+
+[connection signal="body_entered" from="Area2D" to="." method="player_collided"]

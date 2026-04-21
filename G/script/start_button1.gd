@@ -11,5 +11,5 @@ func _process(delta: float) -> void:
 	
 	
 func start_game()->void:
-	get_tree().change_scene_to_file("res://main_scene/bridge_build.tscn")
+	get_tree().change_scene_to_file("res://main_scene/bridge_build1.tscn")
 	

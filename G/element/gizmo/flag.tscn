@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://clw4qpb2o2rbt"]
 
-[ext_resource type="Texture2D" uid="uid://b6pe207nfsld4" path="res://asset/4/flag.png" id="1_u6h7q"]
+[ext_resource type="Texture2D" uid="uid://b6pe207nfsld4" path="res://asset/4/flag-red.png" id="1_u6h7q"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u6h7q"]
 size = Vector2(18.75, 26.375)
