@@ -26,7 +26,7 @@ distance = -107.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_u7nuu"]
 size = Vector2(39.75, 38.75)
 
-[node name="bridge_build1" type="Node2D"]
+[node name="bridge_build11" type="Node2D"]
 
 [node name="platform_spawn" type="Node2D" parent="."]
 texture_filter = 1
