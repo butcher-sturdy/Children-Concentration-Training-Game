@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://t2uch6s4m4dj"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_adbem"]
+load_path = "res://.godot/imported/world_tileset.png-3cf663dca38dcaa8ead3922c9c8ac9f0.ctex"
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fn8yl"]
+atlas = SubResource("CompressedTexture2D_adbem")
+region = Rect2(112, 80, 16, 16)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_fs8mw"]
+size = Vector2(16, 16)
+
+[node name="obstacle1" type="Area2D" unique_id=462775931]
+scale = Vector2(4, 4)
+collision_layer = 2
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1933662643]
+position = Vector2(-0.31250048, 7.8125)
+scale = Vector2(0.03906256, 0.039062403)
+texture = SubResource("AtlasTexture_fn8yl")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=908559243]
+shape = SubResource("RectangleShape2D_fs8mw")

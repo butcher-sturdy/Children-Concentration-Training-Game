@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://y2gqxd608apx"]
+[gd_scene format=3 uid="uid://y2gqxd608apx"]
 
 [ext_resource type="Texture2D" uid="uid://cp8sprcyoepdo" path="res://element/texture/obstacle.tres" id="1_pph4h"]
 
@@ -9,13 +9,12 @@ region = Rect2(112, 80, 16, 16)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_fs8mw"]
 size = Vector2(16, 16)
 
-[node name="obstacle1" type="Area2D"]
+[node name="obstacle1" type="Area2D" unique_id=462775931]
 scale = Vector2(4, 4)
 collision_layer = 2
-collision_mask = 2
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1933662643]
 texture = SubResource("AtlasTexture_fn8yl")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=908559243]
 shape = SubResource("RectangleShape2D_fs8mw")

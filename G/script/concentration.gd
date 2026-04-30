@@ -5,7 +5,7 @@ extends Node
 # 实时读取TXT配置
 @export var read_interval: float = 0.2
 var read_timer: float = 0.0
-const FILE_PATH: String = "C:/Users/ASUS/Desktop/concentration.txt"
+const FILE_PATH: String = "user://concentration.txt"
 
 # 安全修改专注度
 func set_focus_level(value: float) -> void:
