@@ -7,7 +7,7 @@
 [ext_resource type="TileSet" uid="uid://58yoiqggeb7r" path="res://element/texture/map.tres" id="5_hkjxv"]
 [ext_resource type="Texture2D" uid="uid://crsww3bd771me" path="res://asset/bg2.png" id="6_aagsw"]
 [ext_resource type="PackedScene" uid="uid://y2gqxd608apx" path="res://element/gizmo/obstacle_1.tscn" id="7_p3n2i"]
-[ext_resource type="PackedScene" path="res://element/gizmo/obstacle_2.tscn" id="8_aagsw"]
+[ext_resource type="PackedScene" uid="uid://t2uch6s4m4dj" path="res://element/gizmo/obstacle_2.tscn" id="8_aagsw"]
 [ext_resource type="Texture2D" uid="uid://ogqwf2lsabjj" path="res://element/texture/buttontexture.tres" id="8_yolx5"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_a2wok"]
