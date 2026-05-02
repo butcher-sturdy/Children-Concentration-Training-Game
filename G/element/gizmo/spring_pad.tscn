@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://c15xq8r0f4den"]
+
+[ext_resource type="Script" path="res://script/spring_pad.gd" id="1_cavxs"]
+[ext_resource type="Texture2D" path="res://asset/4/spring_pad.png" id="2_tdc3d"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_2lmkp"]
+size = Vector2(150, 58)
+
+[node name="spring_pad" type="Area2D"]
+script = ExtResource("1_cavxs")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_tdc3d")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 9)
+shape = SubResource("RectangleShape2D_2lmkp")

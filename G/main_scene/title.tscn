@@ -1,36 +1,38 @@
-[gd_scene load_steps=8 format=3 uid="uid://hy0wq52r576w"]
+[gd_scene load_steps=6 format=3 uid="uid://hy0wq52r576w"]
 
-[ext_resource type="Texture2D" uid="uid://cdeihbw7n5uy0" path="res://asset/Tiles/Assets/Background_2.png" id="1_r18cd"]
-[ext_resource type="Texture2D" uid="uid://bce5wak272qs6" path="res://element/texture/startbutton.tres" id="2_ambw6"]
-[ext_resource type="Texture2D" uid="uid://b7rncnga5nh58" path="res://asset/3/Sprite sheets/UI Big Play Button.png" id="3_lcijx"]
+[ext_resource type="Texture2D" uid="uid://bc5af0kqrn0" path="res://asset/4/title_background.png" id="1_hfyph"]
+[ext_resource type="Texture2D" uid="uid://biwx7k7ueyga2" path="res://asset/4/setting_button_normal.png" id="2_8r13n"]
+[ext_resource type="Texture2D" uid="uid://baybv3pputgfs" path="res://asset/4/setting_button_pressed.png" id="3_vybnp"]
 [ext_resource type="Script" uid="uid://dpa2teukjyrqs" path="res://script/start_button.gd" id="4_w1u14"]
-[ext_resource type="PackedScene" uid="uid://du4jx8qiybqwe" path="res://main_scene/subtitle.tscn" id="5_r18cd"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xvkw3"]
-atlas = ExtResource("2_ambw6")
-region = Rect2(3, 34, 90, 27)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7gq1g"]
-atlas = ExtResource("3_lcijx")
-region = Rect2(99, 36, 90, 25)
+[ext_resource type="Texture2D" uid="uid://b3hxqveo3hlyd" path="res://asset/4/start_game_text_cn.png" id="6_r6q5f"]
 
 [node name="title" type="Node2D"]
 
 [node name="Background2" type="Sprite2D" parent="."]
-position = Vector2(1499.0001, 570)
-scale = Vector2(4.147, 4.147)
-texture = ExtResource("1_r18cd")
-offset = Vector2(-113.466156, -1.448761)
+position = Vector2(-49, -16)
+scale = Vector2(1.1797503, 1.1797502)
+texture = ExtResource("1_hfyph")
+offset = Vector2(849.5338, 463.55124)
 
 [node name="start_button" type="TextureButton" parent="."]
-offset_left = 622.0
-offset_top = 403.0
-offset_right = 1299.0
-offset_bottom = 677.0
-texture_normal = SubResource("AtlasTexture_xvkw3")
-texture_pressed = SubResource("AtlasTexture_7gq1g")
+offset_left = 309.0
+offset_top = 493.0
+offset_right = 1647.0
+offset_bottom = 794.0
+texture_normal = ExtResource("2_8r13n")
+texture_pressed = ExtResource("3_vybnp")
 stretch_mode = 4
 script = ExtResource("4_w1u14")
-catalogue = ExtResource("5_r18cd")
+
+[node name="Text" type="TextureRect" parent="start_button"]
+layout_mode = 0
+offset_left = 205.0
+offset_top = 32.0
+offset_right = 1081.0
+offset_bottom = 267.0
+mouse_filter = 2
+texture = ExtResource("6_r6q5f")
+expand_mode = 1
+stretch_mode = 5
 
 [connection signal="pressed" from="start_button" to="start_button" method="start_game"]

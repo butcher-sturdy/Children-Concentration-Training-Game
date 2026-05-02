@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=4 uid="uid://dh0b6h85og3xx"]
+[gd_scene load_steps=18 format=4 uid="uid://dh0b6h85og3xx"]
 
 [ext_resource type="Script" uid="uid://wwdlrjf72ui" path="res://script/platform_spawn.gd" id="1_6qh58"]
 [ext_resource type="PackedScene" uid="uid://dsyp5dwl31weq" path="res://element/gizmo/platform.tscn" id="2_lhel7"]
@@ -11,6 +11,8 @@
 [ext_resource type="PackedScene" uid="uid://dt8mfeph17i31" path="res://element/gizmo/platform_static.tscn" id="9_u7nuu"]
 [ext_resource type="PackedScene" uid="uid://clw4qpb2o2rbt" path="res://element/gizmo/flag.tscn" id="10_j25py"]
 [ext_resource type="Texture2D" uid="uid://dgdsuedcpa1dt" path="res://asset/4/flag-yellow.png" id="11_lvrbh"]
+[ext_resource type="Script" uid="uid://ctvmqh0leuslo" path="res://script/pause_menu_controller.gd" id="12_843fq"]
+[ext_resource type="PackedScene" uid="uid://c15xq8r0f4den" path="res://element/gizmo/spring_pad.tscn" id="13_1utb5"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_e1nlc"]
 size = Vector2(1372, 237.5)
@@ -27,6 +29,10 @@ distance = -107.0
 size = Vector2(39.75, 38.75)
 
 [node name="bridge_build1" type="Node2D"]
+
+[node name="PauseMenuController" type="Node" parent="."]
+process_mode = 3
+script = ExtResource("12_843fq")
 
 [node name="platform_spawn" type="Node2D" parent="."]
 texture_filter = 1
@@ -119,6 +125,9 @@ texture = ExtResource("11_lvrbh")
 position = Vector2(854, 825.00006)
 scale = Vector2(3, 3)
 texture = ExtResource("11_lvrbh")
+
+[node name="spring_pad" parent="." instance=ExtResource("13_1utb5")]
+position = Vector2(355, 694)
 
 [connection signal="body_entered" from="killzone" to="player" method="_on_killzone_body_entered"]
 [connection signal="body_entered" from="killzone2" to="player" method="_on_killzone_body_entered"]

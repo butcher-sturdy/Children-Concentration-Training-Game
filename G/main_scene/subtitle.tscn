@@ -1,18 +1,11 @@
-[gd_scene load_steps=8 format=3 uid="uid://du4jx8qiybqwe"]
+[gd_scene load_steps=7 format=3 uid="uid://du4jx8qiybqwe"]
 
 [ext_resource type="Texture2D" uid="uid://cdeihbw7n5uy0" path="res://asset/Tiles/Assets/Background_2.png" id="1_ccqf0"]
-[ext_resource type="Texture2D" uid="uid://bce5wak272qs6" path="res://element/texture/startbutton.tres" id="2_yvnk0"]
-[ext_resource type="Texture2D" uid="uid://b7rncnga5nh58" path="res://asset/3/Sprite sheets/UI Big Play Button.png" id="3_b25yk"]
-[ext_resource type="Script" uid="uid://cpvt10wpbr63v" path="res://script/start_button1.gd" id="4_reh6s"]
-[ext_resource type="Script" uid="uid://chp4yk0ngd7d5" path="res://script/start_button2.gd" id="6_b25yk"]
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_xvkw3"]
-atlas = ExtResource("2_yvnk0")
-region = Rect2(3, 34, 90, 27)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7gq1g"]
-atlas = ExtResource("3_b25yk")
-region = Rect2(99, 36, 90, 25)
+[ext_resource type="Texture2D" uid="uid://biwx7k7ueyga2" path="res://asset/4/setting_button_normal.png" id="2_l25p0"]
+[ext_resource type="Texture2D" uid="uid://baybv3pputgfs" path="res://asset/4/setting_button_pressed.png" id="3_p1oqa"]
+[ext_resource type="Script" uid="uid://c3v2ucdp3yfa4" path="res://script/level_button.gd" id="4_d6g1b"]
+[ext_resource type="FontFile" uid="uid://ctj55kkjiw4ag" path="res://asset/3/fonts/pixelFont-7-8x14-sproutLands.ttf" id="5_vxwt6"]
+[ext_resource type="Texture2D" uid="uid://cs7ix1mun8wd1" path="res://asset/4/level_select_title_cn.png" id="6_5ekm3"]
 
 [node name="title" type="Node2D"]
 
@@ -22,25 +15,64 @@ scale = Vector2(4.147, 4.147)
 texture = ExtResource("1_ccqf0")
 offset = Vector2(-113.466156, -1.448761)
 
-[node name="start_button1" type="TextureButton" parent="."]
-offset_left = 622.0
-offset_top = 403.0
-offset_right = 1299.0
-offset_bottom = 677.0
-texture_normal = SubResource("AtlasTexture_xvkw3")
-texture_pressed = SubResource("AtlasTexture_7gq1g")
-stretch_mode = 4
-script = ExtResource("4_reh6s")
+[node name="Title" type="TextureRect" parent="."]
+offset_left = 660.0
+offset_top = 86.0
+offset_right = 1260.0
+offset_bottom = 230.0
+texture = ExtResource("6_5ekm3")
+expand_mode = 1
+stretch_mode = 5
 
-[node name="start_button2" type="TextureButton" parent="."]
-offset_left = 622.0
-offset_top = 663.0
-offset_right = 1299.0
-offset_bottom = 937.0
-texture_normal = SubResource("AtlasTexture_xvkw3")
-texture_pressed = SubResource("AtlasTexture_7gq1g")
+[node name="level_01" type="TextureButton" parent="."]
+offset_left = 320.0
+offset_top = 300.0
+offset_right = 540.0
+offset_bottom = 410.0
+texture_normal = ExtResource("2_l25p0")
+texture_pressed = ExtResource("3_p1oqa")
 stretch_mode = 4
-script = ExtResource("6_b25yk")
+script = ExtResource("4_d6g1b")
+scene_path = "res://main_scene/bridge_build1.tscn"
 
-[connection signal="pressed" from="start_button1" to="start_button1" method="start_game"]
-[connection signal="pressed" from="start_button2" to="start_button2" method="start_game"]
+[node name="Label" type="Label" parent="level_01"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.337255, 0.160784, 0.0588235, 1)
+theme_override_colors/font_outline_color = Color(1, 0.929412, 0.741176, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("5_vxwt6")
+theme_override_font_sizes/font_size = 50
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="level_02" type="TextureButton" parent="."]
+offset_left = 321.0
+offset_top = 622.0
+offset_right = 1659.0
+offset_bottom = 923.0
+texture_normal = ExtResource("2_l25p0")
+texture_pressed = ExtResource("3_p1oqa")
+stretch_mode = 4
+script = ExtResource("4_d6g1b")
+scene_path = "res://main_scene/bridge_build2.tscn"
+
+[node name="Label" type="Label" parent="level_02"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.337255, 0.160784, 0.0588235, 1)
+theme_override_colors/font_outline_color = Color(1, 0.929412, 0.741176, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("5_vxwt6")
+theme_override_font_sizes/font_size = 50
+text = "2"
+horizontal_alignment = 1
+vertical_alignment = 1

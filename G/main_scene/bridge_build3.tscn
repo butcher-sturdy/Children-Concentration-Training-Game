@@ -1,0 +1,155 @@
+[gd_scene load_steps=16 format=4 uid="uid://ckifw5igjg8g7"]
+
+[ext_resource type="TileSet" uid="uid://58yoiqggeb7r" path="res://element/texture/map.tres" id="1_map3"]
+[ext_resource type="Texture2D" uid="uid://cdeihbw7n5uy0" path="res://asset/Tiles/Assets/Background_2.png" id="2_sky3"]
+[ext_resource type="PackedScene" uid="uid://485ti8070ud4" path="res://element/character/player.tscn" id="3_player"]
+[ext_resource type="PackedScene" uid="uid://jsldumhbd3y8" path="res://element/gizmo/button.tscn" id="4_start"]
+[ext_resource type="PackedScene" uid="uid://dt8mfeph17i31" path="res://element/gizmo/platform_static.tscn" id="5_lift"]
+[ext_resource type="PackedScene" uid="uid://clw4qpb2o2rbt" path="res://element/gizmo/flag.tscn" id="6_flag"]
+[ext_resource type="Script" uid="uid://wwdlrjf72ui" path="res://script/platform_spawn.gd" id="7_spawn_script"]
+[ext_resource type="PackedScene" uid="uid://dsyp5dwl31weq" path="res://element/gizmo/platform.tscn" id="8_platform"]
+[ext_resource type="Texture2D" uid="uid://dgg1v2k1luiql" path="res://asset/1/sprites/platform.png" id="9_platform_tex"]
+[ext_resource type="Texture2D" uid="uid://dgdsuedcpa1dt" path="res://asset/4/flag-yellow.png" id="10_marker"]
+[ext_resource type="Script" uid="uid://bpxjlx0akulis" path="res://script/setting_menu.gd" id="11_pause"]
+[ext_resource type="PackedScene" uid="uid://c15xq8r0f4den" path="res://element/gizmo/spring_pad.tscn" id="12_spring"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_start_button"]
+size = Vector2(22.5, 23.75)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_killzone"]
+size = Vector2(2400, 330)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_side_wall"]
+size = Vector2(120, 1400)
+
+[node name="bridge_build3" type="Node2D"]
+
+[node name="PauseMenuController" type="Node" parent="."]
+process_mode = 3
+script = ExtResource("11_pause")
+
+[node name="map" type="Node2D" parent="."]
+
+[node name="sky" type="Sprite2D" parent="map"]
+z_index = -10
+z_as_relative = false
+texture_filter = 1
+scale = Vector2(4.146911, 4.1469116)
+texture = ExtResource("2_sky3")
+offset = Vector2(247.89536, 136.00482)
+
+[node name="tilemap" type="Node" parent="map"]
+
+[node name="water" type="TileMapLayer" parent="map/tilemap"]
+z_index = -1
+texture_filter = 1
+scale = Vector2(3, 3)
+tile_map_data = PackedByteArray("AAD+/xMAAAAEAAkAAAD//xMAAAAEAAkAAAAAABMAAAAEAAkAAAABABMAAAAEAAkAAAACABMAAAAEAAkAAAADABMAAAAEAAkAAAAEABMAAAAEAAkAAAAFABMAAAAEAAkAAAAGABMAAAAEAAkAAAAHABMAAAAEAAkAAAAIABMAAAAEAAkAAAAJABMAAAAEAAkAAAAKABMAAAAEAAkAAAALABMAAAAEAAkAAAAMABMAAAAEAAkAAAANABMAAAAEAAkAAAAOABMAAAAEAAkAAAAPABMAAAAEAAkAAAAQABMAAAAEAAkAAAARABMAAAAEAAkAAAASABMAAAAEAAkAAAATABMAAAAEAAkAAAAUABMAAAAEAAkAAAAVABMAAAAEAAkAAAAWABMAAAAEAAkAAAAXABMAAAAEAAkAAAAYABMAAAAEAAkAAAAZABMAAAAEAAkAAAAaABMAAAAEAAkAAAAbABMAAAAEAAkAAAAcABMAAAAEAAkAAAAdABMAAAAEAAkAAAAeABMAAAAEAAkAAAAfABMAAAAEAAkAAAAgABMAAAAEAAkAAAAhABMAAAAEAAkAAAAiABMAAAAEAAkAAAAjABMAAAAEAAkAAAAkABMAAAAEAAkAAAAlABMAAAAEAAkAAAAmABMAAAAEAAkAAAAnABMAAAAEAAkAAAAoABMAAAAEAAkAAAApABMAAAAEAAkAAAAqABMAAAAEAAkAAAArABMAAAAEAAkAAAAsABMAAAAEAAkAAAD+/xQAAAAEAAoAAAD//xQAAAAEAAoAAAAAABQAAAAEAAoAAAABABQAAAAEAAoAAAACABQAAAAEAAoAAAADABQAAAAEAAoAAAAEABQAAAAEAAoAAAAFABQAAAAEAAoAAAAGABQAAAAEAAoAAAAHABQAAAAEAAoAAAAIABQAAAAEAAoAAAAJABQAAAAEAAoAAAAKABQAAAAEAAoAAAALABQAAAAEAAoAAAAMABQAAAAEAAoAAAANABQAAAAEAAoAAAAOABQAAAAEAAoAAAAPABQAAAAEAAoAAAAQABQAAAAEAAoAAAARABQAAAAEAAoAAAASABQAAAAEAAoAAAATABQAAAAEAAoAAAAUABQAAAAEAAoAAAAVABQAAAAEAAoAAAAWABQAAAAEAAoAAAAXABQAAAAEAAoAAAAYABQAAAAEAAoAAAAZABQAAAAEAAoAAAAaABQAAAAEAAoAAAAbABQAAAAEAAoAAAAcABQAAAAEAAoAAAAdABQAAAAEAAoAAAAeABQAAAAEAAoAAAAfABQAAAAEAAoAAAAgABQAAAAEAAoAAAAhABQAAAAEAAoAAAAiABQAAAAEAAoAAAAjABQAAAAEAAoAAAAkABQAAAAEAAoAAAAlABQAAAAEAAoAAAAmABQAAAAEAAoAAAAnABQAAAAEAAoAAAAoABQAAAAEAAoAAAApABQAAAAEAAoAAAAqABQAAAAEAAoAAAArABQAAAAEAAoAAAAsABQAAAAEAAoAAAD+/xUAAAAEAAoAAAD//xUAAAAEAAoAAAAAABUAAAAEAAoAAAABABUAAAAEAAoAAAACABUAAAAEAAoAAAADABUAAAAEAAoAAAAEABUAAAAEAAoAAAAFABUAAAAEAAoAAAAGABUAAAAEAAoAAAAHABUAAAAEAAoAAAAIABUAAAAEAAoAAAAJABUAAAAEAAoAAAAKABUAAAAEAAoAAAALABUAAAAEAAoAAAAMABUAAAAEAAoAAAANABUAAAAEAAoAAAAOABUAAAAEAAoAAAAPABUAAAAEAAoAAAAQABUAAAAEAAoAAAARABUAAAAEAAoAAAASABUAAAAEAAoAAAATABUAAAAEAAoAAAAUABUAAAAEAAoAAAAVABUAAAAEAAoAAAAWABUAAAAEAAoAAAAXABUAAAAEAAoAAAAYABUAAAAEAAoAAAAZABUAAAAEAAoAAAAaABUAAAAEAAoAAAAbABUAAAAEAAoAAAAcABUAAAAEAAoAAAAdABUAAAAEAAoAAAAeABUAAAAEAAoAAAAfABUAAAAEAAoAAAAgABUAAAAEAAoAAAAhABUAAAAEAAoAAAAiABUAAAAEAAoAAAAjABUAAAAEAAoAAAAkABUAAAAEAAoAAAAlABUAAAAEAAoAAAAmABUAAAAEAAoAAAAnABUAAAAEAAoAAAAoABUAAAAEAAoAAAApABUAAAAEAAoAAAAqABUAAAAEAAoAAAArABUAAAAEAAoAAAAsABUAAAAEAAoAAAD+/xYAAAAEAAoAAAD//xYAAAAEAAoAAAAAABYAAAAEAAoAAAABABYAAAAEAAoAAAACABYAAAAEAAoAAAADABYAAAAEAAoAAAAEABYAAAAEAAoAAAAFABYAAAAEAAoAAAAGABYAAAAEAAoAAAAHABYAAAAEAAoAAAAIABYAAAAEAAoAAAAJABYAAAAEAAoAAAAKABYAAAAEAAoAAAALABYAAAAEAAoAAAAMABYAAAAEAAoAAAANABYAAAAEAAoAAAAOABYAAAAEAAoAAAAPABYAAAAEAAoAAAAQABYAAAAEAAoAAAARABYAAAAEAAoAAAASABYAAAAEAAoAAAATABYAAAAEAAoAAAAUABYAAAAEAAoAAAAVABYAAAAEAAoAAAAWABYAAAAEAAoAAAAXABYAAAAEAAoAAAAYABYAAAAEAAoAAAAZABYAAAAEAAoAAAAaABYAAAAEAAoAAAAbABYAAAAEAAoAAAAcABYAAAAEAAoAAAAdABYAAAAEAAoAAAAeABYAAAAEAAoAAAAfABYAAAAEAAoAAAAgABYAAAAEAAoAAAAhABYAAAAEAAoAAAAiABYAAAAEAAoAAAAjABYAAAAEAAoAAAAkABYAAAAEAAoAAAAlABYAAAAEAAoAAAAmABYAAAAEAAoAAAAnABYAAAAEAAoAAAAoABYAAAAEAAoAAAApABYAAAAEAAoAAAAqABYAAAAEAAoAAAArABYAAAAEAAoAAAAsABYAAAAEAAoAAAA=")
+tile_set = ExtResource("1_map3")
+
+[node name="land" type="TileMapLayer" parent="map/tilemap"]
+z_index = 1
+texture_filter = 1
+scale = Vector2(3, 3)
+tile_map_data = PackedByteArray("AAABABAAAQACAAIAAAACABAAAQADAAIAAAADABAAAQADAAIAAAAEABAAAQADAAIAAAAFABAAAQADAAIAAAAGABAAAQADAAIAAAAHABAAAQADAAIAAAAIABAAAQADAAIAAAABABEAAQACAAIAAAACABEAAQADAAIAAAADABEAAQADAAIAAAAEABEAAQADAAIAAAAFABEAAQADAAIAAAAGABEAAQADAAIAAAAHABEAAQADAAIAAAAIABEAAQADAAIAAAABABIAAQACAAIAAAACABIAAQADAAIAAAADABIAAQADAAIAAAAEABIAAQADAAIAAAAFABIAAQADAAIAAAAGABIAAQADAAIAAAAHABIAAQADAAIAAAAIABIAAQADAAIAAAAMAA8AAQACAAIAAAANAA8AAQADAAIAAAAOAA8AAQADAAIAAAAPAA8AAQADAAIAAAAQAA8AAQADAAIAAAARAA8AAQADAAIAAAASAA8AAQADAAIAAAAMABAAAQACAAIAAAANABAAAQADAAIAAAAOABAAAQADAAIAAAAPABAAAQADAAIAAAAQABAAAQADAAIAAAARABAAAQADAAIAAAASABAAAQADAAIAAAAUAA0AAQACAAIAAAAVAA0AAQADAAIAAAAWAA0AAQADAAIAAAAXAAoAAQACAAIAAAAYAAoAAQADAAIAAAAZAAoAAQADAAIAAAAaAAoAAQADAAIAAAAbAAoAAQADAAIAAAAcAAoAAQADAAIAAAAXAAsAAQACAAIAAAAYAAsAAQADAAIAAAAZAAsAAQADAAIAAAAaAAsAAQADAAIAAAAbAAsAAQADAAIAAAAcAAsAAQADAAIAAAAiAAgAAQACAAIAAAAjAAgAAQADAAIAAAAkAAgAAQADAAIAAAAlAAgAAQADAAIAAAAmAAgAAQADAAIAAAAnAAgAAQADAAIAAAAoAAgAAQADAAIAAAApAAgAAQADAAIAAAAiAAkAAQACAAIAAAAjAAkAAQADAAIAAAAkAAkAAQADAAIAAAAlAAkAAQADAAIAAAAmAAkAAQADAAIAAAAnAAkAAQADAAIAAAAoAAkAAQADAAIAAAApAAkAAQADAAIAAAAiAAoAAQACAAIAAAAjAAoAAQADAAIAAAAkAAoAAQADAAIAAAAlAAoAAQADAAIAAAAmAAoAAQADAAIAAAAnAAoAAQADAAIAAAAoAAoAAQADAAIAAAApAAoAAQADAAIAAAAFAA4AAQACAAIAAAAGAA4AAQADAAIAAAAdAAkAAQACAAIAAAAeAAkAAQADAAIAAAA=")
+tile_set = ExtResource("1_map3")
+
+[node name="player" parent="." groups=["Player"] instance=ExtResource("3_player")]
+z_index = 2
+position = Vector2(112, 742)
+scale = Vector2(4, 4)
+collision_layer = 7
+collision_mask = 7
+is_auto_run = false
+
+[node name="start_button" parent="." instance=ExtResource("4_start")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 95.0
+offset_top = 91.0
+offset_right = 113.0
+offset_bottom = 109.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="Area2D" type="StaticBody2D" parent="start_button"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="start_button/Area2D"]
+position = Vector2(11.75, 11.625)
+shape = SubResource("RectangleShape2D_start_button")
+
+[node name="elevator" type="Node2D" parent="."]
+
+[node name="LiftToUpperPath" parent="elevator" instance=ExtResource("5_lift")]
+z_index = 1
+position = Vector2(655, 758)
+start_position = Vector2(655, 758)
+end_position = Vector2(1018, 635)
+move_duration = 2.5
+
+[node name="FinalShuttle" parent="elevator" instance=ExtResource("5_lift")]
+z_index = 1
+position = Vector2(1360, 548)
+start_position = Vector2(1360, 548)
+end_position = Vector2(1585, 456)
+move_duration = 2.0
+
+[node name="spring_pad1" parent="." instance=ExtResource("12_spring")]
+z_index = 2
+position = Vector2(830, 710)
+launch_velocity = Vector2(650, -950)
+
+[node name="spring_pad2" parent="." instance=ExtResource("12_spring")]
+z_index = 2
+position = Vector2(1228, 468)
+launch_velocity = Vector2(690, -760)
+
+[node name="killzone" type="Area2D" parent="."]
+
+[node name="WaterFallZone" type="CollisionShape2D" parent="killzone"]
+position = Vector2(960, 1065)
+shape = SubResource("RectangleShape2D_killzone")
+
+[node name="LeftWall" type="CollisionShape2D" parent="killzone"]
+position = Vector2(-80, 540)
+shape = SubResource("RectangleShape2D_side_wall")
+
+[node name="RightWall" type="CollisionShape2D" parent="killzone"]
+position = Vector2(2070, 540)
+shape = SubResource("RectangleShape2D_side_wall")
+
+[node name="flag" parent="." instance=ExtResource("6_flag")]
+z_index = 2
+position = Vector2(1845, 360)
+
+[node name="platform_spawn" type="Node2D" parent="."]
+script = ExtResource("7_spawn_script")
+platform_scene = ExtResource("8_platform")
+platform_texture = ExtResource("9_platform_tex")
+
+[node name="platform_position" type="Node2D" parent="."]
+z_index = 3
+
+[node name="StartMarker" type="Sprite2D" parent="platform_position"]
+position = Vector2(246, 720)
+scale = Vector2(3, 3)
+texture = ExtResource("10_marker")
+
+[node name="LiftTargetMarker" type="Sprite2D" parent="platform_position"]
+position = Vector2(1018, 592)
+scale = Vector2(3, 3)
+texture = ExtResource("10_marker")
+
+[node name="FinalTargetMarker" type="Sprite2D" parent="platform_position"]
+position = Vector2(1585, 412)
+scale = Vector2(3, 3)
+texture = ExtResource("10_marker")
+
+[connection signal="pressed" from="start_button" to="player" method="change_auto_run_mode"]
+[connection signal="platform_arrived" from="elevator/LiftToUpperPath" to="player" method="continue_running"]
+[connection signal="player_touched" from="elevator/LiftToUpperPath" to="player" method="halt_running"]
+[connection signal="platform_arrived" from="elevator/FinalShuttle" to="player" method="continue_running"]
+[connection signal="player_touched" from="elevator/FinalShuttle" to="player" method="halt_running"]
+[connection signal="body_entered" from="killzone" to="player" method="_on_killzone_body_entered"]
+[connection signal="body_entered" from="flag" to="player" method="jump_to_subtitle"]

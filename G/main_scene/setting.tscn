@@ -1,0 +1,80 @@
+[gd_scene load_steps=6 format=3 uid="uid://be8h8lk8l67jr"]
+
+[ext_resource type="Texture2D" uid="uid://cv40l0i7fqdne" path="res://asset/4/setting_background.png" id="1_wnqwt"]
+[ext_resource type="Texture2D" uid="uid://biwx7k7ueyga2" path="res://asset/4/setting_button_normal.png" id="2_lcy1n"]
+[ext_resource type="Script" uid="uid://bpxjlx0akulis" path="res://script/setting_menu.gd" id="3_0of3w"]
+[ext_resource type="Texture2D" uid="uid://baybv3pputgfs" path="res://asset/4/setting_button_pressed.png" id="4_3yx1t"]
+[ext_resource type="FontFile" uid="uid://ctj55kkjiw4ag" path="res://asset/3/fonts/pixelFont-7-8x14-sproutLands.ttf" id="5_27fky"]
+
+[node name="Setting" type="CanvasLayer"]
+layer = 100
+script = ExtResource("3_0of3w")
+
+[node name="SettingBackground" type="Sprite2D" parent="."]
+position = Vector2(1039, 600.00006)
+scale = Vector2(1.4574921, 1.457492)
+texture = ExtResource("1_wnqwt")
+
+[node name="Title" type="Label" parent="."]
+offset_top = 205.0
+offset_right = 1920.0
+offset_bottom = 305.0
+theme_override_colors/font_color = Color(1, 0.913725, 0.690196, 1)
+theme_override_colors/font_outline_color = Color(0.337255, 0.160784, 0.0588235, 1)
+theme_override_constants/outline_size = 8
+theme_override_fonts/font = ExtResource("5_27fky")
+theme_override_font_sizes/font_size = 72
+text = "SETTINGS"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="continue" type="TextureButton" parent="."]
+process_mode = 3
+offset_left = 325.0
+offset_top = 410.0
+offset_right = 1663.0
+offset_bottom = 711.0
+texture_normal = ExtResource("2_lcy1n")
+texture_pressed = ExtResource("4_3yx1t")
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="continue"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.337255, 0.160784, 0.0588235, 1)
+theme_override_colors/font_outline_color = Color(1, 0.929412, 0.741176, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("5_27fky")
+theme_override_font_sizes/font_size = 48
+text = "CONTINUE"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="back_to_title" type="TextureButton" parent="."]
+process_mode = 3
+offset_left = 322.0
+offset_top = 738.0
+offset_right = 1660.0
+offset_bottom = 1039.0
+texture_normal = ExtResource("2_lcy1n")
+texture_pressed = ExtResource("4_3yx1t")
+stretch_mode = 4
+
+[node name="Label" type="Label" parent="back_to_title"]
+layout_mode = 0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.337255, 0.160784, 0.0588235, 1)
+theme_override_colors/font_outline_color = Color(1, 0.929412, 0.741176, 1)
+theme_override_constants/outline_size = 3
+theme_override_fonts/font = ExtResource("5_27fky")
+theme_override_font_sizes/font_size = 44
+text = "BACK TO TITLE"
+horizontal_alignment = 1
+vertical_alignment = 1

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=4 uid="uid://uyn2hq4523u1"]
+[gd_scene load_steps=15 format=4 uid="uid://uyn2hq4523u1"]
 
 [ext_resource type="TileSet" uid="uid://58yoiqggeb7r" path="res://element/texture/map.tres" id="1_otjeq"]
 [ext_resource type="Texture2D" uid="uid://cdeihbw7n5uy0" path="res://asset/Tiles/Assets/Background_2.png" id="2_q7dk0"]
@@ -10,6 +10,7 @@
 [ext_resource type="PackedScene" uid="uid://dsyp5dwl31weq" path="res://element/gizmo/platform.tscn" id="8_tlmaq"]
 [ext_resource type="Texture2D" uid="uid://dgg1v2k1luiql" path="res://asset/1/sprites/platform.png" id="9_jq55a"]
 [ext_resource type="Texture2D" uid="uid://dgdsuedcpa1dt" path="res://asset/4/flag-yellow.png" id="10_t5mpg"]
+[ext_resource type="Script" path="res://script/pause_menu_controller.gd" id="11_me6fl"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_yq7as"]
 size = Vector2(22.5, 23.75)
@@ -21,6 +22,10 @@ size = Vector2(208, 150)
 size = Vector2(198.5, 140)
 
 [node name="bridge_build2" type="Node2D"]
+
+[node name="PauseMenuController" type="Node" parent="."]
+process_mode = 3
+script = ExtResource("11_me6fl")
 
 [node name="map" type="Node2D" parent="."]
 z_index = 2

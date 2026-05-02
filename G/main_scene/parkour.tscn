@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://b883svimoldgy"]
+[gd_scene load_steps=9 format=3 uid="uid://b883svimoldgy"]
 
 [ext_resource type="Script" uid="uid://dem1ql73r6ndm" path="res://script/reset.gd" id="1_0mklw"]
 [ext_resource type="PackedScene" uid="uid://67lx67qde6bg" path="res://test/scene/backgroud/parkourmap.tscn" id="2_rhp4e"]
@@ -6,12 +6,17 @@
 [ext_resource type="PackedScene" uid="uid://bqto2rpedhcgp" path="res://element/character/player_parkour.tscn" id="4_x61lg"]
 [ext_resource type="PackedScene" uid="uid://c6v21g80757jk" path="res://element/gizmo/label.tscn" id="5_kqmvw"]
 [ext_resource type="PackedScene" uid="uid://clw4qpb2o2rbt" path="res://element/gizmo/flag.tscn" id="6_kqmvw"]
+[ext_resource type="Script" path="res://script/pause_menu_controller.gd" id="7_50w5k"]
 
 [sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_cwatd"]
 distance = -365.0
 
 [node name="parkour" type="Node2D"]
 script = ExtResource("1_0mklw")
+
+[node name="PauseMenuController" type="Node" parent="."]
+process_mode = 3
+script = ExtResource("7_50w5k")
 
 [node name="parkourmap" parent="." instance=ExtResource("2_rhp4e")]
 position = Vector2(-12.711151, 62.35894)
