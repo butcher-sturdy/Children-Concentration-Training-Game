@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://d0yrhcnacg14e"]
+
+[ext_resource type="Script" uid="uid://ce1vwthbiwspk" path="res://element/gizmo/jet_vent.gd" id="1_bhejt"]
+[ext_resource type="Texture2D" uid="uid://clrnnf22ecei" path="res://asset/1/sprites/jet.png" id="1_f48ej"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bhejt"]
+size = Vector2(53.5, 58)
+
+[node name="JetVent" type="Area2D" unique_id=1785752445]
+script = ExtResource("1_bhejt")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=181607276]
+position = Vector2(2.562498, -15.312494)
+scale = Vector2(0.3705687, 0.29640922)
+texture = ExtResource("1_f48ej")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1457853637]
+position = Vector2(-0.75, 2)
+shape = SubResource("RectangleShape2D_bhejt")

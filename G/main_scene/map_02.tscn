@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://idrm0r28jsjx"]
+[gd_scene format=4 uid="uid://qdj836wu807x"]
 
 [ext_resource type="Script" uid="uid://dem1ql73r6ndm" path="res://script/reset.gd" id="1_lknpd"]
 [ext_resource type="PackedScene" uid="uid://bqto2rpedhcgp" path="res://element/character/player_parkour.tscn" id="2_aagsw"]
