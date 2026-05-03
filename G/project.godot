@@ -21,6 +21,7 @@ config/features=PackedStringArray("4.6", "Forward Plus")
 [autoload]
 
 concentration="*res://script/concentration.gd"
+PauseMenuController="*uid://ctvmqh0leuslo"
 
 [display]
 
