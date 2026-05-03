@@ -147,11 +147,11 @@ texture = ExtResource("1_ko3w2")
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_66agg"]
 texture = ExtResource("2_gj64w")
 2:0/0 = 0
-2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-6.4749146, -8, -8, 8, 8, 8, 8, -8)
+2:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -4.3166084, 8, 8, -8, 8)
 3:0/0 = 0
 3:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -8, 8, 8, -8, 8)
 4:0/0 = 0
-4:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 5.75548, -8, 8, -3.057598, 6.115196, 1.978447, 5.5756207, 8, -8, 8)
+4:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, -8, 8, -4.3166084, 8, 8, -8, 8)
 7:0/0 = 0
 8:0/0 = 0
 8:0/0/physics_layer_0/polygon_0/points = PackedVector2Array(-8, 8, 8, -2.877739, 8, 8)
