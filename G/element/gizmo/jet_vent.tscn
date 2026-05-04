@@ -4,16 +4,16 @@
 [ext_resource type="Texture2D" uid="uid://clrnnf22ecei" path="res://asset/1/sprites/jet.png" id="1_f48ej"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_bhejt"]
-size = Vector2(53.5, 58)
+size = Vector2(31, 100)
 
 [node name="JetVent" type="Area2D" unique_id=1785752445]
 script = ExtResource("1_bhejt")
 
 [node name="Sprite2D" type="Sprite2D" parent="." unique_id=181607276]
-position = Vector2(2.562498, -15.312494)
-scale = Vector2(0.3705687, 0.29640922)
+position = Vector2(3, -5)
+scale = Vector2(0.36613736, 0.17987806)
 texture = ExtResource("1_f48ej")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1457853637]
-position = Vector2(-0.75, 2)
+position = Vector2(2, 29)
 shape = SubResource("RectangleShape2D_bhejt")
