@@ -2,7 +2,6 @@ extends Node2D
 
 # 导出变量
 @export var platform_scene: PackedScene
-@export var platform_texture: Texture2D
 @export var platform_size: Vector2 = Vector2(100, 35)
 @export var preview_alpha: float = 0.5
 @export var texture_scale_multiplier: float = 1.0
@@ -24,9 +23,18 @@ var cursor_position: Vector2 = Vector2.ZERO
 var placed_platform_rects: Array[Rect2] = []
 var held_move_direction: Vector2 = Vector2.ZERO
 var held_move_timer: float = 0.0
+var preview_texture: Texture2D
+var preview_source_scene: PackedScene
+var preview_region_rect: Rect2 = Rect2()
+var preview_region_enabled: bool = false
+var preview_draw_offset: Vector2 = Vector2.ZERO
+var preview_draw_size: Vector2 = Vector2.ZERO
+var placement_rect_offset: Vector2 = Vector2.ZERO
+var placement_rect_size: Vector2 = Vector2.ZERO
 
 func _ready() -> void:
 	space_state = get_world_2d().direct_space_state
+	refresh_preview_texture()
 	cursor_position = snap_to_grid(initial_cursor_position)
 	queue_redraw()
 
@@ -87,8 +95,8 @@ func is_held_move_key_pressed() -> bool:
 	return false
 
 func try_spawn_platform() -> void:
-	if platform_scene == null or platform_texture == null:
-		print("请先赋值平台预制体/纹理！")
+	if platform_scene == null:
+		print("请先赋值平台场景！")
 		return
 	if current_platform_count >= max_platform_count:
 		print("已达最大平台数量！")
@@ -119,13 +127,13 @@ func overlaps_collision_body(spawn_pos: Vector2) -> bool:
 	if space_state == null:
 		space_state = get_world_2d().direct_space_state
 
-	var footprint: Vector2 = get_platform_footprint_size()
+	var target_rect: Rect2 = get_platform_rect(spawn_pos)
 	var shape: RectangleShape2D = RectangleShape2D.new()
-	shape.size = footprint
+	shape.size = target_rect.size
 
 	var query: PhysicsShapeQueryParameters2D = PhysicsShapeQueryParameters2D.new()
 	query.shape = shape
-	query.transform = Transform2D(0.0, spawn_pos + footprint * 0.5)
+	query.transform = Transform2D(0.0, target_rect.position + target_rect.size * 0.5)
 	query.collision_mask = collision_mask
 	query.collide_with_bodies = true
 	query.collide_with_areas = false
@@ -148,7 +156,17 @@ func spawn_platform(spawn_pos: Vector2) -> void:
 	print("平台生成于合法位置：", spawn_pos)
 
 func get_platform_rect(spawn_pos: Vector2) -> Rect2:
-	return Rect2(spawn_pos, get_platform_footprint_size())
+	return Rect2(spawn_pos + get_platform_placement_offset(), get_platform_placement_size())
+
+func get_platform_placement_offset() -> Vector2:
+	if placement_rect_size.x > 0.0 and placement_rect_size.y > 0.0:
+		return placement_rect_offset
+	return Vector2.ZERO
+
+func get_platform_placement_size() -> Vector2:
+	if placement_rect_size.x > 0.0 and placement_rect_size.y > 0.0:
+		return placement_rect_size
+	return get_platform_footprint_size()
 
 func get_platform_footprint_size() -> Vector2:
 	return Vector2(platform_size.x * 1.3, platform_size.y * 1.1) * texture_scale_multiplier
@@ -169,20 +187,160 @@ func snap_to_grid(raw_pos: Vector2) -> Vector2:
 	var snapped_y: float = grid_origin.y + roundf((raw_pos.y - grid_origin.y) / step.y) * step.y
 	return Vector2(snapped_x, snapped_y)
 
-func _draw() -> void:
-	if platform_texture == null:
+func refresh_preview_texture() -> void:
+	preview_texture = null
+	preview_source_scene = platform_scene
+	preview_region_rect = Rect2()
+	preview_region_enabled = false
+	preview_draw_offset = Vector2.ZERO
+	preview_draw_size = Vector2.ZERO
+	placement_rect_offset = Vector2.ZERO
+	placement_rect_size = Vector2.ZERO
+
+	if platform_scene == null:
 		return
 
-	var texture_size: Vector2 = platform_texture.get_size()
+	var scene_root: Node = platform_scene.instantiate()
+	var sprite: Sprite2D = find_preview_sprite(scene_root)
+	if sprite != null and sprite.texture != null:
+		preview_texture = sprite.texture
+		if sprite.region_enabled and sprite.region_rect.size.x > 0.0 and sprite.region_rect.size.y > 0.0:
+			preview_region_enabled = true
+			preview_region_rect = sprite.region_rect
+		else:
+			preview_region_rect = Rect2(Vector2.ZERO, preview_texture.get_size())
+		update_preview_draw_rect(sprite, scene_root)
+	update_platform_placement_rect(scene_root)
+	scene_root.free()
+
+func update_preview_draw_rect(sprite: Sprite2D, scene_root: Node) -> void:
+	var sprite_source_size: Vector2 = get_preview_texture_size()
+	if sprite_source_size.x <= 0.0 or sprite_source_size.y <= 0.0:
+		return
+
+	var sprite_rect_position: Vector2 = sprite.offset
+	if sprite.centered:
+		sprite_rect_position -= sprite_source_size * 0.5
+
+	var sprite_rect: Rect2 = Rect2(sprite_rect_position, sprite_source_size)
+	var sprite_transform: Transform2D = sprite.global_transform
+	var scene_root_2d: Node2D = scene_root as Node2D
+	if scene_root_2d != null:
+		sprite_transform = scene_root_2d.global_transform.affine_inverse() * sprite.global_transform
+
+	var sprite_bounds: Rect2 = get_transformed_rect(sprite_rect, sprite_transform)
+	preview_draw_offset = get_platform_center_offset() + sprite_bounds.position * texture_scale_multiplier
+	preview_draw_size = sprite_bounds.size * texture_scale_multiplier
+
+func update_platform_placement_rect(scene_root: Node) -> void:
+	var collision_bounds: Rect2 = get_collision_shape_bounds(scene_root, scene_root)
+	if collision_bounds.size.x <= 0.0 or collision_bounds.size.y <= 0.0:
+		return
+
+	placement_rect_offset = get_platform_center_offset() + collision_bounds.position * texture_scale_multiplier
+	placement_rect_size = collision_bounds.size * texture_scale_multiplier
+
+func get_collision_shape_bounds(node: Node, scene_root: Node) -> Rect2:
+	var bounds: Rect2 = Rect2()
+	var has_bounds: bool = false
+
+	var collision_shape: CollisionShape2D = node as CollisionShape2D
+	if collision_shape != null and not collision_shape.disabled and collision_shape.shape != null:
+		var collision_parent: Node = collision_shape.get_parent()
+		if not (collision_parent is Area2D):
+			var shape_bounds: Rect2 = get_shape_bounds(collision_shape.shape)
+			if shape_bounds.size.x > 0.0 and shape_bounds.size.y > 0.0:
+				var shape_transform: Transform2D = collision_shape.global_transform
+				var scene_root_2d: Node2D = scene_root as Node2D
+				if scene_root_2d != null:
+					shape_transform = scene_root_2d.global_transform.affine_inverse() * collision_shape.global_transform
+				bounds = get_transformed_rect(shape_bounds, shape_transform)
+				has_bounds = true
+
+	for child in node.get_children():
+		var child_bounds: Rect2 = get_collision_shape_bounds(child, scene_root)
+		if child_bounds.size.x <= 0.0 or child_bounds.size.y <= 0.0:
+			continue
+		if has_bounds:
+			bounds = get_rect_union(bounds, child_bounds)
+		else:
+			bounds = child_bounds
+			has_bounds = true
+
+	return bounds
+
+func get_shape_bounds(shape: Shape2D) -> Rect2:
+	var rectangle: RectangleShape2D = shape as RectangleShape2D
+	if rectangle != null:
+		return Rect2(-rectangle.size * 0.5, rectangle.size)
+	return Rect2()
+
+func get_rect_union(first: Rect2, second: Rect2) -> Rect2:
+	var min_pos: Vector2 = Vector2(
+		minf(first.position.x, second.position.x),
+		minf(first.position.y, second.position.y)
+	)
+	var max_pos: Vector2 = Vector2(
+		maxf(first.position.x + first.size.x, second.position.x + second.size.x),
+		maxf(first.position.y + first.size.y, second.position.y + second.size.y)
+	)
+	return Rect2(min_pos, max_pos - min_pos)
+
+func get_transformed_rect(rect: Rect2, transform: Transform2D) -> Rect2:
+	var top_left: Vector2 = transform * rect.position
+	var top_right: Vector2 = transform * Vector2(rect.position.x + rect.size.x, rect.position.y)
+	var bottom_left: Vector2 = transform * Vector2(rect.position.x, rect.position.y + rect.size.y)
+	var bottom_right: Vector2 = transform * (rect.position + rect.size)
+
+	var min_pos: Vector2 = Vector2(
+		minf(minf(top_left.x, top_right.x), minf(bottom_left.x, bottom_right.x)),
+		minf(minf(top_left.y, top_right.y), minf(bottom_left.y, bottom_right.y))
+	)
+	var max_pos: Vector2 = Vector2(
+		maxf(maxf(top_left.x, top_right.x), maxf(bottom_left.x, bottom_right.x)),
+		maxf(maxf(top_left.y, top_right.y), maxf(bottom_left.y, bottom_right.y))
+	)
+	return Rect2(min_pos, max_pos - min_pos)
+
+func find_preview_sprite(node: Node) -> Sprite2D:
+	var sprite: Sprite2D = node as Sprite2D
+	if sprite != null and sprite.texture != null:
+		return sprite
+
+	for child in node.get_children():
+		var child_sprite: Sprite2D = find_preview_sprite(child)
+		if child_sprite != null:
+			return child_sprite
+
+	return null
+
+func get_preview_texture_size() -> Vector2:
+	if preview_texture == null:
+		return Vector2.ZERO
+	if preview_region_enabled:
+		return preview_region_rect.size
+	return preview_texture.get_size()
+
+func _draw() -> void:
+	if preview_texture == null or preview_source_scene != platform_scene:
+		refresh_preview_texture()
+	if preview_texture == null:
+		return
+
+	var texture_size: Vector2 = get_preview_texture_size()
 	if texture_size.x <= 0.0 or texture_size.y <= 0.0:
 		return
 
-	var footprint: Vector2 = get_platform_footprint_size()
-	var scale: Vector2 = Vector2(footprint.x / texture_size.x, footprint.y / texture_size.y)
 	var preview_color: Color = Color(1, 1, 1, preview_alpha)
 	if not can_place_platform_at(cursor_position):
 		preview_color = Color(1, 0.25, 0.25, preview_alpha)
 
-	draw_set_transform(to_local(cursor_position), 0.0, scale)
-	draw_texture(platform_texture, Vector2.ZERO, preview_color)
-	draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+	var draw_size: Vector2 = preview_draw_size
+	if draw_size.x <= 0.0 or draw_size.y <= 0.0:
+		draw_size = get_platform_footprint_size()
+
+	var draw_rect: Rect2 = Rect2(to_local(cursor_position + preview_draw_offset), draw_size)
+	if preview_region_enabled:
+		draw_texture_rect_region(preview_texture, draw_rect, preview_region_rect, preview_color)
+	else:
+		draw_texture_rect(preview_texture, draw_rect, false, preview_color)

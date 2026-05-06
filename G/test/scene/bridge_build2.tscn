@@ -96,7 +96,6 @@ position = Vector2(1854, 328)
 [node name="platform_spawn" type="Node2D" parent="."]
 script = ExtResource("6_ekuce")
 platform_scene = ExtResource("7_hdcpt")
-platform_texture = ExtResource("8_7llht")
 
 [node name="platform_position" type="Node2D" parent="."]
 

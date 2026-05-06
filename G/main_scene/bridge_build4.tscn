@@ -69,7 +69,6 @@ shape = SubResource("RectangleShape2D_yq7as")
 [node name="platform_spawn" type="Node2D" parent="."]
 script = ExtResource("8_6kq8u")
 platform_scene = ExtResource("9_dri2x")
-platform_texture = ExtResource("10_e7vlw")
 
 [node name="flag" parent="." instance=ExtResource("7_e2aiu")]
 position = Vector2(1672, 856)

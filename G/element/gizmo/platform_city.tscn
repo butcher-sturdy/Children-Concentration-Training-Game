@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://c0c3h0eb4oykh"]
+
+[ext_resource type="Texture2D" uid="uid://h6bfsmu0n4at" path="res://asset/city/platform_city.png" id="1_qdbli"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qdbli"]
+size = Vector2(113, 32)
+
+[node name="platform_city" type="RigidBody2D"]
+gravity_scale = 0.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(8, 8)
+texture = ExtResource("1_qdbli")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, 0)
+shape = SubResource("RectangleShape2D_qdbli")

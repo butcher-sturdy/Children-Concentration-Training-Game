@@ -1,0 +1,29 @@
+[gd_scene load_steps=5 format=3 uid="uid://cgfp84fqisag7"]
+
+[ext_resource type="Script" uid="uid://bcxtm4koyshyt" path="res://script/platform_elevator_city.gd" id="1_3n1fh"]
+[ext_resource type="Texture2D" path="res://asset/city/elevator_platform_city.png" id="2_qtgih"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xpts0"]
+size = Vector2(126, 37)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_bt3qt"]
+size = Vector2(111, 43)
+
+[node name="elevator" type="AnimatableBody2D"]
+script = ExtResource("1_3n1fh")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, -17)
+scale = Vector2(0.5, 0.5)
+texture = ExtResource("2_qtgih")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 0.5)
+shape = SubResource("RectangleShape2D_xpts0")
+
+[node name="Area2D" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
+position = Vector2(0.5, -2.5)
+shape = SubResource("RectangleShape2D_bt3qt")
