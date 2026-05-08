@@ -120,7 +120,7 @@ scale = Vector2(3, 3)
 texture = ExtResource("11_6o0wy")
 
 [node name="FlagYellow1" type="Sprite2D" parent="platform_position" unique_id=2070333399]
-position = Vector2(860.00006, 868.00006)
+position = Vector2(526, 127.00006)
 scale = Vector2(3, 3)
 texture = ExtResource("11_6o0wy")
 
