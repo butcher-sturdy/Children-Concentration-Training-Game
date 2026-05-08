@@ -1,4 +1,8 @@
+<<<<<<< Updated upstream
 [gd_resource type="TileSet" load_steps=5 format=3 uid="uid://58yoiqggeb7r"]
+=======
+[gd_resource type="TileSet" format=3 uid="uid://58yoiqggeb7r"]
+>>>>>>> Stashed changes
 
 [ext_resource type="Texture2D" uid="uid://bxxe38vn218mn" path="res://asset/1/sprites/world_tileset.png" id="1_ko3w2"]
 [ext_resource type="Texture2D" uid="uid://jm8aixxvk7ky" path="res://asset/Tiles/Assets/Assets.png" id="2_gj64w"]

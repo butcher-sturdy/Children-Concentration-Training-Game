@@ -5,7 +5,10 @@ extends Node
 # 实时读取TXT配置
 @export var read_interval: float = 0.2
 var read_timer: float = 0.0
-const FILE_PATH: String = "C:/Users/ASUS/Desktop/concentration.txt"
+
+# 【关键修改 1】：把 Windows 的 C 盘路径，改成 Godot 项目自身的根目录！
+# 这样不仅 Mac 和 Windows 都能通用，而且 txt 文件会直接生成在你左下角的文件系统里，非常方便你手动修改测试。
+const FILE_PATH: String = "res://concentration.txt"
 
 # 安全修改专注度
 func set_focus_level(value: float) -> void:
@@ -40,5 +43,10 @@ func read_focus_from_file():
 # 自动创建默认文件
 func write_default_file():
 	var file = FileAccess.open(FILE_PATH, FileAccess.WRITE)
-	file.store_line("50")
-	file.close()
+	# 【关键修改 2】：增加安全防护 (if file:)！
+	# 以后万一没权限创建文件，游戏也不会崩溃，只会打印一句警告。
+	if file:
+		file.store_line("50")
+		file.close()
+	else:
+		print("警告：无法创建脑电波文件，请检查路径！")

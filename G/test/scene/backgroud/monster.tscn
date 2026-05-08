@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://dihlhoriwjphf"]
+
+[ext_resource type="Script" uid="uid://b3ebtg4kgjk13" path="res://main_scene/monster.gd" id="1_8a1je"]
+[ext_resource type="Texture2D" uid="uid://fbf57ljfutj7" path="res://asset/1/sprites/slime_green.png" id="2_a1m7e"]
+[ext_resource type="Script" uid="uid://bbwmp8tnoyvul" path="res://main_scene/collision_shape_2d.gd" id="3_ou6d3"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_r6goq"]
+size = Vector2(61.5, 69.5)
+
+[node name="Monster" type="Area2D" unique_id=2022934639]
+script = ExtResource("1_8a1je")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1782462857]
+scale = Vector2(2.8809524, 4.5625)
+texture = ExtResource("2_a1m7e")
+region_enabled = true
+region_rect = Rect2(47.849537, 55.370308, 21.389156, 16.629692)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=490194699]
+shape = SubResource("RectangleShape2D_r6goq")
+script = ExtResource("3_ou6d3")
