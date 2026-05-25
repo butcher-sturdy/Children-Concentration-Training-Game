@@ -1,0 +1,100 @@
+[gd_scene load_steps=15 format=4 uid="uid://7ds03eiuixf3"]
+
+[ext_resource type="Script" uid="uid://jff2hgh86ym4" path="res://script/bridge_build_answer_hint.gd" id="1_tahrc"]
+[ext_resource type="Texture2D" uid="uid://c0utls146fwec" path="res://asset/city/city_background.png" id="2_oghly"]
+[ext_resource type="TileSet" uid="uid://58yoiqggeb7r" path="res://element/texture/map.tres" id="3_u5pxf"]
+[ext_resource type="PackedScene" uid="uid://clw4qpb2o2rbt" path="res://element/gizmo/flag.tscn" id="4_mepog"]
+[ext_resource type="PackedScene" uid="uid://jsldumhbd3y8" path="res://element/gizmo/button.tscn" id="5_clcbs"]
+[ext_resource type="Script" uid="uid://wwdlrjf72ui" path="res://script/platform_spawn.gd" id="6_u3gua"]
+[ext_resource type="PackedScene" uid="uid://c0c3h0eb4oykh" path="res://element/gizmo/platform_city.tscn" id="7_44nuf"]
+[ext_resource type="PackedScene" uid="uid://485ti8070ud4" path="res://element/character/player.tscn" id="8_aeibv"]
+[ext_resource type="Script" uid="uid://ctvmqh0leuslo" path="res://script/pause_menu_controller.gd" id="9_fawqd"]
+[ext_resource type="PackedScene" uid="uid://6hr3y7tthabu" path="res://element/gizmo/reverse_direction_pad.tscn" id="10_oghly"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_cwkt3"]
+size = Vector2(22.5, 23.75)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8hoxh"]
+size = Vector2(375, 359)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qjjnb"]
+size = Vector2(691.875, 398.875)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_x86yx"]
+size = Vector2(446, 1217)
+
+[node name="BridgeBuildCity1" type="Node2D"]
+
+[node name="BridgeBuildAnswerHint" type="Node2D" parent="."]
+script = ExtResource("1_tahrc")
+
+[node name="map" type="Node2D" parent="."]
+
+[node name="CityBackground" type="Sprite2D" parent="map"]
+position = Vector2(966.00006, 544)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("2_oghly")
+
+[node name="waste" type="TileMapLayer" parent="map"]
+scale = Vector2(4, 4)
+tile_map_data = PackedByteArray("AAAIAA4AAwAMAAcAAAAJAA4AAwANAAcAAAAKAA4AAwAMAAcAAAALAA4AAwANAAcAAAAKAA8AAwAMAAcAAAALAA8AAwANAAcAAAAMAA8AAwAMAAcAAAAMAA4AAwAMAAcAAAAKABAAAwAMAAcAAAALABAAAwANAAcAAAAIAA8AAwAMAAcAAAAJAA8AAwANAAcAAAAIABAAAwAMAAcAAAAJABAAAwANAAcAAAAMABAAAwAMAAcAAAAMABEAAwAMAAcAAAAKABEAAwAMAAcAAAALABEAAwANAAcAAAAIABEAAwAMAAcAAAAJABEAAwANAAcAAAAIABIAAwAMAAcAAAAJABIAAwANAAcAAAAKABIAAwAMAAcAAAALABIAAwANAAcAAAAMABIAAwAMAAcAAAAIAA0AAwAMAAYAAAAJAA0AAwANAAYAAAAKAA0AAwAMAAYAAAALAA0AAwANAAYAAAAMAA0AAwAMAAYAAAAHAA0AAwANAAYAAAAGAA0AAwANAAYAAAAGAA4AAwANAAcAAAAGAA8AAwANAAcAAAAGABAAAwANAAcAAAAGABEAAwANAAcAAAAGABIAAwANAAcAAAAHAA4AAwANAAcAAAAHAA8AAwANAAcAAAAHABAAAwANAAcAAAAHABEAAwANAAcAAAAHABIAAwANAAcAAAA=")
+tile_set = ExtResource("3_u5pxf")
+
+[node name="constructure" type="TileMapLayer" parent="map"]
+scale = Vector2(4, 4)
+tile_map_data = PackedByteArray("AAD//wkAAwAAAAIAAAD//woAAwAAAAMAAAAAAAkAAwABAAIAAAAAAAoAAwABAAMAAAD//wsAAwAAAAMAAAD//wwAAwAAAAQAAAD//w0AAwAAAAUAAAAAAAsAAwABAAMAAAAAAAwAAwABAAQAAAAAAA0AAwABAAUAAAD//w4AAwAAAAMAAAD//w8AAwAAAAQAAAD//xAAAwAAAAUAAAAAAA4AAwABAAMAAAAAAA8AAwABAAQAAAAAABAAAwABAAUAAAD//xEAAwAAAAYAAAD//xIAAwAAAAcAAAAAABEAAwABAAYAAAAAABIAAwABAAcAAAABAAkAAwACAAIAAAABAAoAAwACAAMAAAABAAsAAwACAAQAAAABAAwAAwACAAUAAAABAA0AAwACAAYAAAABAA4AAwACAAQAAAACAAkAAwADAAIAAAACAAoAAwADAAMAAAACAAsAAwADAAQAAAACAAwAAwADAAUAAAACAA0AAwADAAYAAAACAA4AAwADAAQAAAADAAkAAwACAAIAAAADAAoAAwACAAMAAAADAAsAAwACAAQAAAADAAwAAwACAAUAAAADAA0AAwACAAYAAAADAA4AAwACAAQAAAAEAAkAAwADAAIAAAAEAAoAAwADAAMAAAAEAAsAAwADAAQAAAAEAAwAAwADAAUAAAAEAA0AAwADAAYAAAAEAA4AAwADAAQAAAAFAAkAAwACAAIAAAAFAAoAAwACAAMAAAAFAAsAAwACAAQAAAAFAAwAAwACAAUAAAAFAA0AAwACAAYAAAAFAA4AAwACAAQAAAAGAAkAAwAFAAIAAAAGAAoAAwAFAAMAAAAGAAsAAwAFAAMAAAAGAAwAAwAFAAMAAAAGAA0AAwAFAAMAAAAGAA4AAwAFAAMAAAABAA8AAwACAAUAAAABABAAAwACAAQAAAACAA8AAwADAAUAAAACABAAAwADAAQAAAABABEAAwACAAUAAAACABEAAwADAAUAAAADAA8AAwACAAUAAAADABAAAwACAAQAAAAEAA8AAwADAAUAAAAEABAAAwADAAQAAAADABEAAwACAAUAAAAEABEAAwADAAUAAAAFAA8AAwACAAUAAAAFABAAAwACAAQAAAAGAA8AAwAFAAMAAAAGABAAAwAFAAMAAAAFABEAAwACAAUAAAAGABEAAwAFAAMAAAABABIAAwABAAcAAAACABIAAwACAAcAAAADABIAAwADAAcAAAAEABIAAwAEAAcAAAAFABIAAwABAAcAAAAGABIAAwAFAAMAAAAAAAUAAwACAAgAAAAAAAYAAwACAAkAAAAAAAcAAwACAAoAAAAAAAgAAwACAAsAAAABAAUAAwADAAgAAAABAAYAAwADAAkAAAABAAcAAwADAAoAAAABAAgAAwADAAsAAAANAAsAAwACAAIAAAAOAAsAAwACAAIAAAAPAAsAAwADAAIAAAAQAAsAAwAEAAIAAAARAAsAAwABAAIAAAASAAsAAwACAAIAAAAMAAsAAwAAAAIAAAAMAAwAAwAAAAMAAAAMAA0AAwAAAAQAAAAMAA4AAwAAAAUAAAAMAA8AAwAAAAMAAAAMABAAAwAAAAQAAAAMABEAAwAAAAUAAAAMABIAAwAAAAMAAAAOAAwAAwACAAMAAAAOAA0AAwACAAQAAAAOAA4AAwACAAUAAAAPAAwAAwADAAMAAAAPAA0AAwADAAQAAAAPAA4AAwADAAUAAAANAAwAAwABAAMAAAANAA0AAwABAAQAAAANAA4AAwABAAUAAAAQAAwAAwAEAAMAAAAQAA0AAwAEAAQAAAAQAA4AAwAEAAUAAAANAA8AAwABAAMAAAANABAAAwABAAQAAAANABEAAwABAAUAAAAOAA8AAwACAAMAAAAOABAAAwACAAQAAAAOABEAAwACAAUAAAAPAA8AAwADAAMAAAAPABAAAwADAAQAAAAPABEAAwADAAUAAAAQAA8AAwAEAAMAAAAQABAAAwAEAAQAAAAQABEAAwAEAAUAAAANABIAAwABAAMAAAAOABIAAwACAAMAAAAPABIAAwADAAMAAAAQABIAAwAEAAMAAAARAAwAAwABAAMAAAARAA0AAwABAAQAAAARAA4AAwABAAUAAAASAAwAAwACAAMAAAASAA0AAwACAAQAAAASAA4AAwACAAUAAAARAA8AAwABAAMAAAARABAAAwABAAQAAAARABEAAwABAAUAAAASAA8AAwACAAMAAAASABAAAwACAAQAAAASABEAAwACAAUAAAARABIAAwABAAMAAAASABIAAwACAAMAAAATAAsAAwAFAAIAAAATAAwAAwAFAAMAAAATAA0AAwAFAAMAAAATAA4AAwAFAAMAAAATAA8AAwANAAIAAAATABAAAwAEAAMAAAATABIAAwAFAAMAAAAQAAoAAwACAAEAAAARAAoAAwADAAEAAAATABEAAwAFAAMAAAAUABAAAwAOAAMAAAAVABAAAwAPAAMAAAAUAA8AAwAOAAIAAAAVAA8AAwAPAAIAAAAaAA4AAwAKAAIAAAAaAA8AAwAKAAMAAAAbAA4AAwALAAIAAAAbAA8AAwALAAMAAAAcAA4AAwAMAAIAAAAcAA8AAwAMAAMAAAAdAA4AAwANAAIAAAAdAA8AAwANAAMAAAAeAA4AAwAOAAIAAAAeAA8AAwAOAAMAAAAfAA4AAwAPAAIAAAAfAA8AAwAPAAMAAAA=")
+tile_set = ExtResource("3_u5pxf")
+
+[node name="flag" parent="." instance=ExtResource("4_mepog")]
+position = Vector2(1310, 900)
+
+[node name="start_button" parent="." instance=ExtResource("5_clcbs")]
+anchors_preset = 0
+anchor_right = 0.0
+anchor_bottom = 0.0
+offset_left = 117.0
+offset_top = 70.0
+offset_right = 135.0
+offset_bottom = 88.0
+grow_horizontal = 1
+grow_vertical = 1
+
+[node name="Area2D" type="StaticBody2D" parent="start_button"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="start_button/Area2D"]
+position = Vector2(11.75, 11.625)
+shape = SubResource("RectangleShape2D_cwkt3")
+
+[node name="killzone" type="Area2D" parent="."]
+position = Vector2(672, 815)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="killzone"]
+position = Vector2(-59.5, 216.5)
+shape = SubResource("RectangleShape2D_8hoxh")
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="killzone"]
+position = Vector2(921.0625, 431.4375)
+shape = SubResource("RectangleShape2D_qjjnb")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="killzone"]
+position = Vector2(1467, 77.5)
+shape = SubResource("RectangleShape2D_x86yx")
+
+[node name="Node2D" type="Node2D" parent="."]
+script = ExtResource("6_u3gua")
+platform_scene = ExtResource("7_44nuf")
+
+[node name="player" parent="." groups=["Player"] instance=ExtResource("8_aeibv")]
+position = Vector2(352, 549)
+scale = Vector2(4, 4)
+
+[node name="PauseMenuController" type="Node" parent="."]
+process_mode = 3
+script = ExtResource("9_fawqd")
+
+[node name="reverse_direction_pad" parent="." instance=ExtResource("10_oghly")]
+position = Vector2(1747, 883)
+
+[connection signal="body_entered" from="flag" to="player" method="jump_to_subtitle"]
+[connection signal="pressed" from="start_button" to="player" method="change_auto_run_mode"]
+[connection signal="body_entered" from="killzone" to="player" method="_on_killzone_body_entered"]

@@ -1,0 +1,41 @@
+{
+	"res://main_scene/bridge_build1.tscn": [
+		[
+			854.0,
+			825.00006
+		],
+		[
+			852.00006,
+			489.00006
+		]
+	],
+	"res://main_scene/bridge_build2.tscn": [
+		[
+			1501.5,
+			391.5
+		]
+	],
+	"res://main_scene/bridge_build3.tscn": [
+		[
+			442.75,
+			738.0
+		],
+		[
+			558.25,
+			795.75
+		],
+		[
+			1058.75,
+			545.5
+		]
+	],
+	"res://main_scene/bridge_build4.tscn": [
+		[
+			866.25,
+			911.25
+		]
+	],
+	"res://main_scene/bridge_build5.tscn": [],
+	"res://main_scene/bridge_build_city_1.tscn": [],
+	"res://main_scene/bridge_build_city_2.tscn": []
+}

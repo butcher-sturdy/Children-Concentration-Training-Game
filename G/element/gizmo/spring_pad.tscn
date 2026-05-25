@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://c15xq8r0f4den"]
 
-[ext_resource type="Script" path="res://script/spring_pad.gd" id="1_cavxs"]
-[ext_resource type="Texture2D" path="res://asset/4/spring_pad.png" id="2_tdc3d"]
+[ext_resource type="Script" uid="uid://d282xauxlfsgm" path="res://script/spring_pad.gd" id="1_cavxs"]
+[ext_resource type="Texture2D" uid="uid://dk4f0ghbiiupt" path="res://asset/4/spring_pad.png" id="2_tdc3d"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_2lmkp"]
 size = Vector2(150, 58)

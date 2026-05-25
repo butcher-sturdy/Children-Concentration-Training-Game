@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://bj85eoh0e5g2k"]
+[gd_scene load_steps=13 format=4 uid="uid://dlj2v5n5ek71s"]
 
 [ext_resource type="Texture2D" uid="uid://c0utls146fwec" path="res://asset/city/city_background.png" id="1_bj4rp"]
 [ext_resource type="TileSet" uid="uid://58yoiqggeb7r" path="res://element/texture/map.tres" id="2_mcajo"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://c0c3h0eb4oykh" path="res://element/gizmo/platform_city.tscn" id="7_g03rt"]
 [ext_resource type="PackedScene" uid="uid://485ti8070ud4" path="res://element/character/player.tscn" id="8_f5056"]
 [ext_resource type="Script" uid="uid://ctvmqh0leuslo" path="res://script/pause_menu_controller.gd" id="9_lds08"]
+[ext_resource type="Script" uid="uid://jff2hgh86ym4" path="res://script/bridge_build_answer_hint.gd" id="10_answer"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cwkt3"]
 size = Vector2(22.5, 23.75)
@@ -19,6 +20,9 @@ size = Vector2(990.625, 233)
 size = Vector2(752.75, 98.75)
 
 [node name="BridgeBuildCity1" type="Node2D"]
+
+[node name="BridgeBuildAnswerHint" type="Node2D" parent="."]
+script = ExtResource("10_answer")
 
 [node name="map" type="Node2D" parent="."]
 

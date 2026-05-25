@@ -4,7 +4,8 @@ extends CharacterBody2D
 @export var move_speed: float = 300.0
 @export var jump_force: float = -600.0  # Y轴向下，负数向上跳
 @export var gravity: float = 1800.0
-@export var is_auto_run: bool = true  # 新增：自动向右跑开关（默认开启）
+@export_range(-1, 1, 2) var run_direction: int = 1
+@export var is_auto_run: bool = true  # 自动跑开关（默认开启）
 @export var air_damping: float = 1
 # 引用AnimatedSprite2D子节点（名称匹配）
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -21,7 +22,7 @@ func _physics_process(delta: float) -> void:
 
 	if is_on_floor():
 		if is_auto_run:
-			velocity.x = move_speed  # 地面自动跑
+			velocity.x = move_speed * run_direction  # 地面自动跑
 		else:
 			# 保留手动控制逻辑（关闭自动跑时可用）
 			var input_dir: float = Input.get_axis("move_left", "move_right")
@@ -35,7 +36,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	# 5. 控制动画
-	update_animation(1.0 if is_auto_run else Input.get_axis("move_left", "move_right"))
+	update_animation(float(run_direction) if is_auto_run else Input.get_axis("move_left", "move_right"))
 
 # 动画控制逻辑（适配自动跑）
 func update_animation(input_dir: float) -> void:
@@ -46,12 +47,12 @@ func update_animation(input_dir: float) -> void:
 	# 空中保持最后一帧
 	if not is_on_floor():
 		return
-	# 自动跑/地面移动 → 播放walk + 固定向右（不翻转）
+	# 自动跑/地面移动 → 播放walk + 匹配当前方向
 	elif is_auto_run or input_dir != 0.0:
 		if animated_sprite.animation != "walk":
 			animated_sprite.animation = "walk"
 			animated_sprite.play()
-		animated_sprite.flip_h = false  # 自动跑固定向右，关闭翻转
+		animated_sprite.flip_h = input_dir < 0.0
 	# 地面静止（仅关闭自动跑时触发）→ 播放idle
 	else:
 		if animated_sprite.animation != "idle":
@@ -60,6 +61,7 @@ func update_animation(input_dir: float) -> void:
 			animated_sprite.play()
 
 func _ready() -> void:
+	run_direction = 1 if run_direction >= 0 else -1
 	start_position = global_position
 	# 验证动画配置
 	if animated_sprite and animated_sprite.sprite_frames:
@@ -78,13 +80,22 @@ func _ready() -> void:
 # 响应 KillZone 信号的方法
 func _on_killzone_body_entered(body: Node2D) -> void:
 	global_position = start_position
+	run_direction = 1
 	is_auto_run=false
 	velocity = Vector2.ZERO
 	print("玩家返回初始位置！")
 	 
 func change_auto_run_mode()->void:
 	global_position = start_position
+	run_direction = 1
 	is_auto_run=!is_auto_run
+
+func flip_move_direction() -> void:
+	run_direction *= -1
+	if is_auto_run:
+		velocity.x = move_speed * run_direction
+	if animated_sprite:
+		animated_sprite.flip_h = run_direction < 0
 	
 func jump_to_subtitle(body: Node2D)->void:
 	if body.is_in_group("Player"):

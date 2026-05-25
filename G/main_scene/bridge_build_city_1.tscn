@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=4 uid="uid://d27r532kacxt6"]
+[gd_scene load_steps=15 format=4 uid="uid://d27r532kacxt6"]
 
 [ext_resource type="Texture2D" uid="uid://c0utls146fwec" path="res://asset/city/city_background.png" id="1_q1mv3"]
 [ext_resource type="TileSet" uid="uid://58yoiqggeb7r" path="res://element/texture/map.tres" id="2_uyhji"]
@@ -9,6 +9,8 @@
 [ext_resource type="Script" uid="uid://wwdlrjf72ui" path="res://script/platform_spawn.gd" id="7_qjjnb"]
 [ext_resource type="PackedScene" uid="uid://c0c3h0eb4oykh" path="res://element/gizmo/platform_city.tscn" id="8_epohg"]
 [ext_resource type="Script" uid="uid://ctvmqh0leuslo" path="res://script/pause_menu_controller.gd" id="9_epohg"]
+[ext_resource type="Script" uid="uid://jff2hgh86ym4" path="res://script/bridge_build_answer_hint.gd" id="10_answer"]
+[ext_resource type="Texture2D" uid="uid://cka8u0ktxighk" path="res://asset/4/flag-blue.png" id="11_xv8cu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_cwkt3"]
 size = Vector2(22.5, 23.75)
@@ -21,9 +23,17 @@ size = Vector2(1273.5, 513.5)
 
 [node name="BridgeBuildCity1" type="Node2D"]
 
+[node name="BridgeBuildAnswerHint" type="Node2D" parent="."]
+script = ExtResource("10_answer")
+
 [node name="map" type="Node2D" parent="."]
 
 [node name="CityBackground" type="Sprite2D" parent="map"]
+position = Vector2(966.00006, 544)
+scale = Vector2(1.2, 1.2)
+texture = ExtResource("1_q1mv3")
+
+[node name="CityBackground2" type="Sprite2D" parent="map"]
 position = Vector2(966.00006, 544)
 scale = Vector2(1.2, 1.2)
 texture = ExtResource("1_q1mv3")
@@ -86,6 +96,18 @@ scale = Vector2(4, 4)
 [node name="PauseMenuController" type="Node" parent="."]
 process_mode = 3
 script = ExtResource("9_epohg")
+
+[node name="platform_position" type="Node" parent="."]
+
+[node name="FlagBlue" type="Sprite2D" parent="platform_position"]
+position = Vector2(1114, 726)
+scale = Vector2(3, 3)
+texture = ExtResource("11_xv8cu")
+
+[node name="FlagBlue2" type="Sprite2D" parent="platform_position"]
+position = Vector2(1232, 284)
+scale = Vector2(3, 3)
+texture = ExtResource("11_xv8cu")
 
 [connection signal="body_entered" from="flag" to="player" method="jump_to_subtitle"]
 [connection signal="platform_arrived" from="elevator" to="player" method="continue_running"]

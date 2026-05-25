@@ -1,0 +1,18 @@
+[gd_scene load_steps=4 format=3 uid="uid://6hr3y7tthabu"]
+
+[ext_resource type="Script" uid="uid://dfg3b7u6e7ngq" path="res://script/reverse_direction_pad.gd" id="1_3eu18"]
+[ext_resource type="Texture2D" uid="uid://b58a65rcmo0er" path="res://asset/4/reverse_direction_pad.png" id="2_g3a1s"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trigger"]
+size = Vector2(150, 42)
+
+[node name="reverse_direction_pad" type="Area2D"]
+script = ExtResource("1_3eu18")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("2_g3a1s")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -3)
+shape = SubResource("RectangleShape2D_trigger")

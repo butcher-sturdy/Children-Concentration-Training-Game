@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://du4jx8qiybqwe"]
 
-[ext_resource type="Texture2D" uid="uid://cdeihbw7n5uy0" path="res://asset/Tiles/Assets/Background_2.png" id="1_ccqf0"]
+[ext_resource type="Texture2D" uid="uid://d0cbs3kmd2s1s" path="res://asset/4/background_title.png" id="1_yvnk0"]
 [ext_resource type="Texture2D" uid="uid://biwx7k7ueyga2" path="res://asset/4/setting_button_normal.png" id="2_l25p0"]
 [ext_resource type="Texture2D" uid="uid://baybv3pputgfs" path="res://asset/4/setting_button_pressed.png" id="3_p1oqa"]
 [ext_resource type="Script" uid="uid://c3v2ucdp3yfa4" path="res://script/level_button.gd" id="4_d6g1b"]
@@ -10,10 +10,10 @@
 [node name="title" type="Node2D"]
 
 [node name="Background2" type="Sprite2D" parent="."]
-position = Vector2(1499.0001, 570)
-scale = Vector2(4.147, 4.147)
-texture = ExtResource("1_ccqf0")
-offset = Vector2(-113.466156, -1.448761)
+position = Vector2(-49, -16)
+scale = Vector2(1.1797503, 1.1797502)
+texture = ExtResource("1_yvnk0")
+offset = Vector2(849.5338, 463.55124)
 
 [node name="Title" type="TextureRect" parent="."]
 offset_left = 660.0

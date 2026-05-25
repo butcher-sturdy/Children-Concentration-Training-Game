@@ -5,6 +5,7 @@ extends CharacterBody2D
 @export var jump_force: float = -800.0
 @export var gravity: float = 1800.0   
 @export var is_auto_run: bool = true
+@export_range(-1, 1, 2) var run_direction: int = 1
 
 # 专注度相关阈值（Player自主配置）
 @export var invincible_threshold: float = 50.0  # 无敌阈值
@@ -32,6 +33,7 @@ var is_invincible: bool = false  # 是否无敌
 var is_flying: bool = false      # 是否飞行
 
 func _ready() -> void:
+	run_direction = 1 if run_direction >= 0 else -1
 	# 缓存初始值
 	original_mask = collision_mask
 	original_speed = move_speed
@@ -68,7 +70,7 @@ func _physics_process(delta: float) -> void:
 	if not is_flying:
 		handle_jump()
 	move_and_slide()
-	update_animation(1.0 if is_auto_run else Input.get_axis("move_left", "move_right"))
+	update_animation(float(run_direction) if is_auto_run else Input.get_axis("move_left", "move_right"))
 
 # ========== Player自主判断状态（修正标识符：concentration → Global） ==========
 func update_focus_states() -> void:
@@ -98,14 +100,14 @@ func handle_focus_effects() -> void:
 func handle_gravity(delta: float) -> void:
 	if not is_on_floor() and not is_flying:
 		velocity.y += gravity * delta
-	elif not is_flying:
+	elif not is_flying and velocity.y > 0.0:
 		velocity.y = 0.0
 
 # 移动逻辑
 func handle_movement() -> void:
 	velocity.x = 0.0
 	if is_auto_run:
-		velocity.x = move_speed
+		velocity.x = move_speed * run_direction
 	else:
 		velocity.x = Input.get_axis("move_left", "move_right") * move_speed
 
@@ -124,7 +126,7 @@ func update_animation(input_dir: float) -> void:
 		if animated_sprite.animation != "walk":
 			animated_sprite.animation = "walk"
 			animated_sprite.play()
-		animated_sprite.flip_h = false
+		animated_sprite.flip_h = input_dir < 0.0
 	else:
 		if animated_sprite.animation != "idle":
 			animated_sprite.animation = "idle"
@@ -157,6 +159,7 @@ func reset_game() -> void:
 	is_flying = false
 	collision_mask = original_mask  # 恢复碰撞掩码
 	move_speed = original_speed     # 恢复基础速度
+	run_direction = 1
 	fly_base_y = 0.0                # 重置飞行Y轴
 	is_hit_cooldown = false         # 重置冷却状态
 	hit_cooldown = 1.0              # 重置冷却时间
@@ -171,6 +174,8 @@ func _update_last_ground_position() -> void:
 			#print("最后一次地面位置更新：", last_on_ground_position)
 # 原有死亡重置（killzone触发，保留）
 func _on_killzone_body_entered(body: Node2D) -> void:
+	if body != self:
+		return
 	if not is_hit_cooldown:
 		global_position = last_on_ground_position
 		velocity = Vector2.ZERO
@@ -215,7 +220,15 @@ func pause_gravity_for_2_seconds():
 	
 func change_auto_run_mode()->void:
 	global_position = start_position
+	run_direction = 1
 	is_auto_run=!is_auto_run
+
+func flip_move_direction() -> void:
+	run_direction *= -1
+	if is_auto_run:
+		velocity.x = move_speed * run_direction
+	if animated_sprite:
+		animated_sprite.flip_h = run_direction < 0
 	
 func jump_to_subtitle(body: Node2D)->void:
 	if body.is_in_group("Player"):

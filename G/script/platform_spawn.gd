@@ -1,5 +1,10 @@
 extends Node2D
 
+signal platform_spawned(spawn_pos: Vector2, platform: Node2D)
+signal platform_removed(spawn_pos: Vector2, platform: Node2D)
+
+const ANSWER_HINT_SCRIPT_PATH: String = "res://script/bridge_build_answer_hint.gd"
+
 # 导出变量
 @export var platform_scene: PackedScene
 @export var platform_size: Vector2 = Vector2(100, 35)
@@ -13,6 +18,7 @@ extends Node2D
 @export var initial_cursor_position: Vector2 = Vector2(385, 430)
 @export var held_move_initial_delay: float = 0.25
 @export var held_move_repeat_interval: float = 0.08
+@export var use_mouse_position_for_mouse_actions: bool = true
 
 # 最大生成数量
 @export var max_platform_count: int = 10
@@ -21,8 +27,12 @@ var current_platform_count: int = 0
 var space_state: PhysicsDirectSpaceState2D
 var cursor_position: Vector2 = Vector2.ZERO
 var placed_platform_rects: Array[Rect2] = []
+var placed_platform_positions: Array[Vector2] = []
+var placed_platform_nodes: Array[Node2D] = []
 var held_move_direction: Vector2 = Vector2.ZERO
 var held_move_timer: float = 0.0
+var keyboard_cursor_active: bool = false
+var last_mouse_position: Vector2 = Vector2.ZERO
 var preview_texture: Texture2D
 var preview_source_scene: PackedScene
 var preview_region_rect: Rect2 = Rect2()
@@ -36,36 +46,75 @@ func _ready() -> void:
 	space_state = get_world_2d().direct_space_state
 	refresh_preview_texture()
 	cursor_position = snap_to_grid(initial_cursor_position)
+	last_mouse_position = get_viewport().get_mouse_position()
+	install_answer_hint()
 	queue_redraw()
 
-func _unhandled_input(event: InputEvent) -> void:
+func install_answer_hint() -> void:
+	# 自动挂载答案提示脚本。以后新建 bridgebuild 关卡时，只要使用本放置器，
+	# 就会自动拥有答案记录按钮和 P 键提示。
+	if get_node_or_null("BridgeBuildAnswerHint") != null:
+		return
+	if get_tree().current_scene != null and get_tree().current_scene.find_child("BridgeBuildAnswerHint", true, false) != null:
+		return
+
+	var hint_script := load(ANSWER_HINT_SCRIPT_PATH) as Script
+	if hint_script == null:
+		print("未找到搭桥答案提示脚本：", ANSWER_HINT_SCRIPT_PATH)
+		return
+
+	var hint_node := hint_script.new() as Node
+	if hint_node == null:
+		print("搭桥答案提示脚本根类型必须是 Node。")
+		return
+
+	hint_node.name = "BridgeBuildAnswerHint"
+	add_child(hint_node)
+
+func _input(event: InputEvent) -> void:
 	var key_event: InputEventKey = event as InputEventKey
 	if key_event != null and key_event.pressed and not key_event.echo:
-		match key_event.keycode:
+		match get_keycode(key_event):
 			KEY_LEFT:
 				start_held_move(Vector2.LEFT)
+				get_viewport().set_input_as_handled()
 			KEY_RIGHT:
 				start_held_move(Vector2.RIGHT)
+				get_viewport().set_input_as_handled()
 			KEY_UP:
 				start_held_move(Vector2.UP)
+				get_viewport().set_input_as_handled()
 			KEY_DOWN:
 				start_held_move(Vector2.DOWN)
+				get_viewport().set_input_as_handled()
+
+func get_keycode(key_event: InputEventKey) -> int:
+	# 有些键盘布局下 keycode 可能为 0，physical_keycode 更稳定。
+	if key_event.keycode != KEY_NONE:
+		return key_event.keycode
+	return key_event.physical_keycode
 
 func _process(delta: float) -> void:
-	update_held_move(delta)
+	update_cursor_control_mode()
+
+	if use_mouse_position_for_mouse_actions and not keyboard_cursor_active:
+		cursor_position = snap_to_grid(get_global_mouse_position())
+	else:
+		update_held_move(delta)
 	queue_redraw()
 
-	if Input.is_action_just_pressed("mouse_left"):
-		try_spawn_platform()
+	if Input.is_action_just_pressed("mouse_left") and not is_mouse_over_gui():
+		try_spawn_platform(get_mouse_action_position())
 
-	if Input.is_action_just_pressed("mouse_right"):
-		reload_current_scene()
+	if Input.is_action_just_pressed("mouse_right") and not is_mouse_over_gui():
+		remove_platform_at(get_mouse_action_position())
 
 func move_cursor(direction: Vector2) -> void:
 	cursor_position = snap_to_grid(cursor_position + direction * get_grid_step())
 	queue_redraw()
 
 func start_held_move(direction: Vector2) -> void:
+	keyboard_cursor_active = true
 	held_move_direction = direction
 	held_move_timer = held_move_initial_delay
 	move_cursor(direction)
@@ -94,18 +143,39 @@ func is_held_move_key_pressed() -> bool:
 		return Input.is_key_pressed(KEY_DOWN)
 	return false
 
-func try_spawn_platform() -> void:
+func get_mouse_action_position() -> Vector2:
+	# 鼠标输入动作默认使用真实鼠标位置；如需恢复旧的键盘光标逻辑，
+	# 可在检查器里关闭 use_mouse_position_for_mouse_actions。
+	if use_mouse_position_for_mouse_actions:
+		cursor_position = snap_to_grid(get_global_mouse_position())
+		keyboard_cursor_active = false
+	return cursor_position
+
+func update_cursor_control_mode() -> void:
+	if not use_mouse_position_for_mouse_actions:
+		return
+
+	var mouse_position := get_viewport().get_mouse_position()
+	if mouse_position.distance_to(last_mouse_position) > 0.1:
+		keyboard_cursor_active = false
+	last_mouse_position = mouse_position
+
+func is_mouse_over_gui() -> bool:
+	# 点击 UI 按钮时不放置 / 删除平台，避免按“记录答案”时误记录一个平台。
+	return get_viewport().gui_get_hovered_control() != null
+
+func try_spawn_platform(spawn_pos: Vector2) -> void:
 	if platform_scene == null:
 		print("请先赋值平台场景！")
 		return
 	if current_platform_count >= max_platform_count:
 		print("已达最大平台数量！")
 		return
-	if not can_place_platform_at(cursor_position):
+	if not can_place_platform_at(spawn_pos):
 		print("当前位置不能放置平台！")
 		return
 
-	spawn_platform(cursor_position)
+	spawn_platform(spawn_pos)
 
 func reload_current_scene() -> void:
 	get_tree().reload_current_scene()
@@ -140,11 +210,11 @@ func overlaps_collision_body(spawn_pos: Vector2) -> bool:
 
 	return not space_state.intersect_shape(query, 1).is_empty()
 
-func spawn_platform(spawn_pos: Vector2) -> void:
+func spawn_platform(spawn_pos: Vector2) -> Node2D:
 	var new_platform: Node2D = platform_scene.instantiate() as Node2D
 	if new_platform == null:
 		print("平台预制体根节点必须是 Node2D！")
-		return
+		return null
 
 	new_platform.global_position = spawn_pos + get_platform_center_offset()
 	new_platform.scale = Vector2(texture_scale_multiplier, texture_scale_multiplier)
@@ -152,8 +222,59 @@ func spawn_platform(spawn_pos: Vector2) -> void:
 	add_child(new_platform)
 
 	placed_platform_rects.append(get_platform_rect(spawn_pos))
+	placed_platform_positions.append(spawn_pos)
+	placed_platform_nodes.append(new_platform)
 	current_platform_count += 1
+	emit_signal("platform_spawned", spawn_pos, new_platform)
 	print("平台生成于合法位置：", spawn_pos)
+	return new_platform
+
+func remove_platform_at(spawn_pos: Vector2) -> bool:
+	var platform_index := get_platform_index_at(spawn_pos)
+	if platform_index == -1:
+		print("鼠标位置没有可撤销的平台：", spawn_pos)
+		return false
+
+	return remove_platform_by_index(platform_index)
+
+func remove_platform_node(platform: Node2D) -> bool:
+	var platform_index := placed_platform_nodes.find(platform)
+	if platform_index == -1:
+		return false
+	return remove_platform_by_index(platform_index)
+
+func remove_platform_by_index(platform_index: int) -> bool:
+	if platform_index < 0 or platform_index >= placed_platform_nodes.size():
+		return false
+
+	var removed_position := placed_platform_positions[platform_index]
+	var removed_platform := placed_platform_nodes[platform_index]
+
+	placed_platform_positions.remove_at(platform_index)
+	placed_platform_rects.remove_at(platform_index)
+	placed_platform_nodes.remove_at(platform_index)
+	current_platform_count = maxi(0, current_platform_count - 1)
+
+	if is_instance_valid(removed_platform):
+		removed_platform.queue_free()
+
+	emit_signal("platform_removed", removed_position, removed_platform)
+	print("已撤销鼠标位置的平台：", removed_position)
+	return true
+
+func get_platform_index_at(spawn_pos: Vector2) -> int:
+	var target_rect := get_platform_rect(spawn_pos)
+	var target_center := target_rect.position + target_rect.size * 0.5
+
+	for index in range(placed_platform_rects.size() - 1, -1, -1):
+		var placed_rect := placed_platform_rects[index]
+		if placed_rect.has_point(target_center) or placed_rect.intersects(target_rect, true):
+			return index
+
+		if placed_platform_positions[index].distance_to(spawn_pos) <= get_grid_step().length() * 0.5:
+			return index
+
+	return -1
 
 func get_platform_rect(spawn_pos: Vector2) -> Rect2:
 	return Rect2(spawn_pos + get_platform_placement_offset(), get_platform_placement_size())
