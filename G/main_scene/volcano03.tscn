@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://wwdlrjf72ui" path="res://script/platform_spawn.gd" id="1_1akuk"]
 [ext_resource type="PackedScene" uid="uid://dsyp5dwl31weq" path="res://element/gizmo/platform.tscn" id="2_py266"]
-[ext_resource type="Texture2D" uid="uid://dd5byotmqj5s" path="res://asset/1/sprites/platform1.png" id="3_y4b8f"]
 [ext_resource type="Texture2D" uid="uid://crsww3bd771me" path="res://asset/bg2.png" id="4_qdt8w"]
 [ext_resource type="TileSet" uid="uid://58yoiqggeb7r" path="res://element/texture/map.tres" id="5_hdfu3"]
 [ext_resource type="PackedScene" uid="uid://485ti8070ud4" path="res://element/character/player.tscn" id="6_w0odt"]
@@ -33,7 +32,6 @@ size = Vector2(39.75, 38.75)
 texture_filter = 1
 script = ExtResource("1_1akuk")
 platform_scene = ExtResource("2_py266")
-platform_texture = ExtResource("3_y4b8f")
 platform_size = Vector2(100, 67)
 
 [node name="map" type="Node2D" parent="." unique_id=936936696]
