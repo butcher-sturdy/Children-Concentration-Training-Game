@@ -16,6 +16,8 @@ extends CharacterBody2D
 var current_lives: int                        # 当前剩余命数
 @export var hit_cooldown: float = 1.0           # 碰撞冷却（避免重复扣血，默认1秒）
 var is_hit_cooldown: bool = true               # 冷却状态标记
+@export var fall_kill_y: float = 1080.0         # 掉到这个Y坐标以下时触发killzone逻辑
+@export var fall_respawn_backtrack_x: float = 200.0 # 掉落后回到最后落脚点左侧的距离
 
 # 引用节点
 @onready var animated_sprite: AnimatedSprite2D = $AnimatedSprite2D
@@ -70,6 +72,7 @@ func _physics_process(delta: float) -> void:
 	if not is_flying:
 		handle_jump()
 	move_and_slide()
+	_check_fall_killzone()
 	update_animation(float(run_direction) if is_auto_run else Input.get_axis("move_left", "move_right"))
 
 # ========== Player自主判断状态（修正标识符：concentration → Global） ==========
@@ -176,48 +179,27 @@ func _update_last_ground_position() -> void:
 func _on_killzone_body_entered(body: Node2D) -> void:
 	if body != self:
 		return
-	if not is_hit_cooldown:
-		global_position = last_on_ground_position
-		velocity = Vector2.ZERO
-		pause_gravity_for_2_seconds()
-		current_lives -= 1
-	print("玩家返回初始位置！")
-	
-	
-	
-var gravity_timer: Timer = null  # 用于控制重力恢复的Timer
-func pause_gravity_for_2_seconds():
-	# 1. 先保存原始重力值（避免后续改不回去）
-	var original_gravity = gravity
-	
-	# 2. 立即将重力设为0
-	gravity = 0.0
-	print("重力已暂停，2秒后恢复")
-	
-	
+	_trigger_killzone()
 
-	# 3. 先清理旧的Timer（避免重复触发）
-	if gravity_timer and is_instance_valid(gravity_timer):
-		gravity_timer.stop()
-		gravity_timer.queue_free()
-	
-	# 4. 创建新的一次性Timer（2秒后触发）
-	gravity_timer = Timer.new()
-	gravity_timer.wait_time = 0.7  # 持续2秒
-	gravity_timer.one_shot = true  # 只触发一次
-	gravity_timer.autostart = true  # 自动启动
-	
-	# 5. 绑定超时信号：恢复重力
-	gravity_timer.timeout.connect(func():
-		gravity = original_gravity  # 恢复原始重力值
-		print("2秒已到，重力恢复为：", original_gravity)
-		gravity_timer.queue_free()  # 释放Timer，避免内存占用
-	)
-	
-	# 6. 必须将Timer添加到场景树（否则Timer不工作）
-	add_child(gravity_timer)
-	
-	
+
+func _check_fall_killzone() -> void:
+	if global_position.y >= fall_kill_y:
+		_trigger_killzone()
+
+
+func _trigger_killzone() -> void:
+	if is_hit_cooldown:
+		return
+
+	global_position = last_on_ground_position + Vector2(-fall_respawn_backtrack_x, 0.0)
+	velocity = Vector2.ZERO
+	current_lives -= 1
+	is_hit_cooldown = true
+	hit_cooldown = 1.0
+	emit_signal("life_changed", current_lives, max_lives)
+	print("玩家掉落！剩余命数：", current_lives)
+
+
 func change_auto_run_mode()->void:
 	global_position = start_position
 	run_direction = 1

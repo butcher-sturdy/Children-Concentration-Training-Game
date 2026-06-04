@@ -4,13 +4,23 @@ signal platform_spawned(spawn_pos: Vector2, platform: Node2D)
 signal platform_removed(spawn_pos: Vector2, platform: Node2D)
 
 const ANSWER_HINT_SCRIPT_PATH: String = "res://script/bridge_build_answer_hint.gd"
+const FOCUS_SOLID_META: String = "focus_feedback_solid"
+const FOCUS_BASE_MODULATE_META: String = "focus_feedback_base_modulate"
 
 # 导出变量
 @export var platform_scene: PackedScene
 @export var platform_size: Vector2 = Vector2(100, 35)
-@export var preview_alpha: float = 0.5
+@export var preview_alpha: float = 1.0
 @export var texture_scale_multiplier: float = 1.0
 @export var collision_mask: int = 1
+@export var focus_outline_threshold: float = 40.0
+@export var focus_half_threshold: float = 60.0
+@export var focus_solid_threshold: float = 75.0
+@export_range(0.0, 1.0, 0.01) var focus_outline_alpha: float = 0.18
+@export_range(0.0, 1.0, 0.01) var focus_half_alpha_start: float = 0.35
+@export_range(0.0, 1.0, 0.01) var focus_half_alpha_end: float = 0.55
+@export_range(0.0, 1.0, 0.01) var focus_forming_alpha_start: float = 0.65
+@export_range(0.0, 1.0, 0.01) var focus_forming_alpha_end: float = 0.95
 
 # 为 Vector2.ZERO 时，自动使用统一的短距离作为一格大小。
 @export var grid_step: Vector2 = Vector2.ZERO
@@ -101,6 +111,7 @@ func _process(delta: float) -> void:
 		cursor_position = snap_to_grid(get_global_mouse_position())
 	else:
 		update_held_move(delta)
+	update_platform_focus_states()
 	queue_redraw()
 
 	if Input.is_action_just_pressed("mouse_left") and not is_mouse_over_gui():
@@ -219,6 +230,7 @@ func spawn_platform(spawn_pos: Vector2) -> Node2D:
 	new_platform.global_position = spawn_pos + get_platform_center_offset()
 	new_platform.scale = Vector2(texture_scale_multiplier, texture_scale_multiplier)
 	new_platform.name = "RigidPlatform_" + str(current_platform_count + 1)
+	apply_platform_focus_state(new_platform, get_current_focus_level())
 	add_child(new_platform)
 
 	placed_platform_rects.append(get_platform_rect(spawn_pos))
@@ -442,6 +454,77 @@ func get_preview_texture_size() -> Vector2:
 		return preview_region_rect.size
 	return preview_texture.get_size()
 
+func get_current_focus_level() -> float:
+	var focus_source := get_node_or_null("/root/concentration")
+	if focus_source == null:
+		return 0.0
+	var focus_value: Variant = focus_source.get("focus_level")
+	if typeof(focus_value) == TYPE_NIL:
+		return 0.0
+	return clampf(float(focus_value), 0.0, 100.0)
+
+func get_focus_platform_alpha(focus_level: float) -> float:
+	var focus := clampf(focus_level, 0.0, 100.0)
+	if focus < focus_outline_threshold:
+		return focus_outline_alpha
+	if focus < focus_half_threshold:
+		var half_t := clampf(
+			(focus - focus_outline_threshold) / maxf(0.001, focus_half_threshold - focus_outline_threshold),
+			0.0,
+			1.0
+		)
+		return lerpf(focus_half_alpha_start, focus_half_alpha_end, half_t)
+	if focus < focus_solid_threshold:
+		var forming_t := clampf(
+			(focus - focus_half_threshold) / maxf(0.001, focus_solid_threshold - focus_half_threshold),
+			0.0,
+			1.0
+		)
+		return lerpf(focus_forming_alpha_start, focus_forming_alpha_end, forming_t)
+	return 1.0
+
+func update_platform_focus_states() -> void:
+	var focus_level := get_current_focus_level()
+	for platform in placed_platform_nodes:
+		if is_instance_valid(platform):
+			apply_platform_focus_state(platform, focus_level)
+
+func apply_platform_focus_state(platform: Node2D, focus_level: float) -> void:
+	if not platform.has_meta(FOCUS_BASE_MODULATE_META):
+		platform.set_meta(FOCUS_BASE_MODULATE_META, platform.modulate)
+
+	var was_locked_solid := platform.has_meta(FOCUS_SOLID_META) and bool(platform.get_meta(FOCUS_SOLID_META))
+	var is_locked_solid := was_locked_solid or focus_level >= focus_solid_threshold
+
+	var base_modulate: Color = platform.modulate
+	var base_modulate_value: Variant = platform.get_meta(FOCUS_BASE_MODULATE_META)
+	if base_modulate_value is Color:
+		base_modulate = base_modulate_value
+	var alpha := 1.0 if is_locked_solid else get_focus_platform_alpha(focus_level)
+	platform.modulate = Color(base_modulate.r, base_modulate.g, base_modulate.b, base_modulate.a * alpha)
+
+	if not platform.has_meta(FOCUS_SOLID_META) or was_locked_solid != is_locked_solid:
+		set_platform_collision_enabled(platform, is_locked_solid)
+		platform.set_meta(FOCUS_SOLID_META, is_locked_solid)
+
+func set_platform_collision_enabled(node: Node, enabled: bool) -> void:
+	var collision_shape := node as CollisionShape2D
+	if collision_shape != null:
+		if collision_shape.is_inside_tree():
+			collision_shape.set_deferred("disabled", not enabled)
+		else:
+			collision_shape.disabled = not enabled
+
+	var collision_polygon := node as CollisionPolygon2D
+	if collision_polygon != null:
+		if collision_polygon.is_inside_tree():
+			collision_polygon.set_deferred("disabled", not enabled)
+		else:
+			collision_polygon.disabled = not enabled
+
+	for child in node.get_children():
+		set_platform_collision_enabled(child, enabled)
+
 func _draw() -> void:
 	if preview_texture == null or preview_source_scene != platform_scene:
 		refresh_preview_texture()
@@ -452,9 +535,10 @@ func _draw() -> void:
 	if texture_size.x <= 0.0 or texture_size.y <= 0.0:
 		return
 
-	var preview_color: Color = Color(1, 1, 1, preview_alpha)
+	var focus_preview_alpha := clampf(get_focus_platform_alpha(get_current_focus_level()) * preview_alpha, 0.0, 1.0)
+	var preview_color: Color = Color(1, 1, 1, focus_preview_alpha)
 	if not can_place_platform_at(cursor_position):
-		preview_color = Color(1, 0.25, 0.25, preview_alpha)
+		preview_color = Color(1, 0.25, 0.25, focus_preview_alpha)
 
 	var draw_size: Vector2 = preview_draw_size
 	if draw_size.x <= 0.0 or draw_size.y <= 0.0:

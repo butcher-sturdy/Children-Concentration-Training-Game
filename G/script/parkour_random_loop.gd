@@ -1,12 +1,25 @@
 extends Node2D
 
-const START_SEGMENT: PackedScene = preload("res://test/parkourmap1.tscn")
+const START_SEGMENT: PackedScene = preload("res://element/parkourmap/parkourmap1.tscn")
 const SEGMENT_SCENES: Array[PackedScene] = [
-	preload("res://test/parkourmap1.tscn"),
-	preload("res://test/parkourmap2.tscn"),
-	preload("res://test/parkourmap3.tscn"),
-	preload("res://test/parkourmap4.tscn"),
+	preload("res://element/parkourmap/parkourmap1.tscn"),
+	preload("res://element/parkourmap/parkourmap2.tscn"),
+	preload("res://element/parkourmap/parkourmap3.tscn"),
+	preload("res://element/parkourmap/parkourmap4.tscn"),
+	preload("res://element/parkourmap/parkourmap5.tscn"),
+	preload("res://element/parkourmap/parkourmap6.tscn"),
+	preload("res://element/parkourmap/parkourmap7.tscn"),
+	preload("res://element/parkourmap/parkourmap8.tscn"),
+	preload("res://element/parkourmap/parkourmap9.tscn"),
+	preload("res://element/parkourmap/parkourmap10.tscn"),
+	preload("res://element/parkourmap/parkourmap11.tscn"),
+	preload("res://element/parkourmap/parkourmap12.tscn"),
+	preload("res://element/parkourmap/parkourmap13.tscn"),
+	preload("res://element/parkourmap/parkourmap14.tscn"),
+	preload("res://element/parkourmap/parkourmap15.tscn"),
+	preload("res://element/parkourmap/parkourmap16.tscn"),
 ]
+const KILLZONE_SCRIPT: Script = preload("res://script/killzone.gd")
 
 @export var initial_segment_count: int = 3
 @export var generation_distance: float = 7000.0
@@ -125,7 +138,7 @@ func _spawn_segment(scene: PackedScene, is_starting_segment: bool = false) -> vo
 
 	segment.position = Vector2(next_segment_x, 0.0)
 	segment_container.add_child(segment)
-	_connect_segment_obstacles(segment)
+	_connect_segment_body_entered_signals(segment)
 	var measurements: Dictionary = _measure_segment(segment)
 	var width: float = maxf(float(measurements["right_edge"]), minimum_segment_length)
 	var entry_y: float = float(measurements["entry_y"])
@@ -212,10 +225,28 @@ func _collect_tile_layers(node: Node, layers: Array[TileMapLayer]) -> void:
 		_collect_tile_layers(child, layers)
 
 
-func _connect_segment_obstacles(node: Node) -> void:
-	if node.is_in_group("obstacle") and node.has_signal("body_entered"):
-		var hit_callback := Callable(player, "_on_body_entered")
-		if not node.is_connected("body_entered", hit_callback):
-			node.connect("body_entered", hit_callback)
+func _connect_segment_body_entered_signals(node: Node) -> void:
+	if node.has_signal("body_entered"):
+		if node.is_in_group("obstacle"):
+			var hit_callback := Callable(player, "_on_body_entered")
+			if not node.is_connected("body_entered", hit_callback):
+				node.connect("body_entered", hit_callback)
+
+		if _is_killzone_node(node):
+			var killzone_callback := Callable(player, "_on_killzone_body_entered")
+			if not node.is_connected("body_entered", killzone_callback):
+				node.connect("body_entered", killzone_callback)
+
 	for child: Node in node.get_children():
-		_connect_segment_obstacles(child)
+		_connect_segment_body_entered_signals(child)
+
+
+func _is_killzone_node(node: Node) -> bool:
+	if node.is_in_group("killzone") or node.is_in_group("KillZone"):
+		return true
+
+	if String(node.name).to_lower().begins_with("killzone"):
+		return true
+
+	var script: Script = node.get_script() as Script
+	return script != null and script.resource_path == KILLZONE_SCRIPT.resource_path

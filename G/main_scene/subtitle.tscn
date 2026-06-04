@@ -1,78 +1,477 @@
 [gd_scene load_steps=7 format=3 uid="uid://du4jx8qiybqwe"]
 
-[ext_resource type="Texture2D" uid="uid://d0cbs3kmd2s1s" path="res://asset/4/background_title.png" id="1_yvnk0"]
-[ext_resource type="Texture2D" uid="uid://biwx7k7ueyga2" path="res://asset/4/setting_button_normal.png" id="2_l25p0"]
-[ext_resource type="Texture2D" uid="uid://baybv3pputgfs" path="res://asset/4/setting_button_pressed.png" id="3_p1oqa"]
-[ext_resource type="Script" uid="uid://c3v2ucdp3yfa4" path="res://script/level_button.gd" id="4_d6g1b"]
-[ext_resource type="FontFile" uid="uid://ctj55kkjiw4ag" path="res://asset/3/fonts/pixelFont-7-8x14-sproutLands.ttf" id="5_vxwt6"]
-[ext_resource type="Texture2D" uid="uid://cs7ix1mun8wd1" path="res://asset/4/level_select_title_cn.png" id="6_5ekm3"]
+[ext_resource type="Texture2D" uid="uid://d0cbs3kmd2s1s" path="res://asset/4/background_title.png" id="1_bg"]
+[ext_resource type="FontFile" uid="uid://ctj55kkjiw4ag" path="res://asset/3/fonts/pixelFont-7-8x14-sproutLands.ttf" id="2_font"]
 
-[node name="title" type="Node2D"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_normal"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(1, 0.866667, 0.521569, 0.95)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.337255, 0.160784, 0.0588235, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
-[node name="Background2" type="Sprite2D" parent="."]
-position = Vector2(-49, -16)
-scale = Vector2(1.1797503, 1.1797502)
-texture = ExtResource("1_yvnk0")
-offset = Vector2(849.5338, 463.55124)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(1, 0.929412, 0.65098, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.337255, 0.160784, 0.0588235, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
-[node name="Title" type="TextureRect" parent="."]
-offset_left = 660.0
-offset_top = 86.0
-offset_right = 1260.0
-offset_bottom = 230.0
-texture = ExtResource("6_5ekm3")
-expand_mode = 1
-stretch_mode = 5
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_pressed"]
+content_margin_left = 12.0
+content_margin_top = 8.0
+content_margin_right = 12.0
+content_margin_bottom = 8.0
+bg_color = Color(0.894118, 0.658824, 0.337255, 1)
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.337255, 0.160784, 0.0588235, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
 
-[node name="level_01" type="TextureButton" parent="."]
-offset_left = 320.0
-offset_top = 300.0
-offset_right = 540.0
-offset_bottom = 410.0
-texture_normal = ExtResource("2_l25p0")
-texture_pressed = ExtResource("3_p1oqa")
-stretch_mode = 4
-script = ExtResource("4_d6g1b")
-scene_path = "res://main_scene/bridge_build1.tscn"
+[sub_resource type="Theme" id="Theme_level_buttons"]
+Button/colors/font_color = Color(0.337255, 0.160784, 0.0588235, 1)
+Button/colors/font_hover_color = Color(0.337255, 0.160784, 0.0588235, 1)
+Button/colors/font_pressed_color = Color(0.337255, 0.160784, 0.0588235, 1)
+Button/colors/font_outline_color = Color(1, 0.929412, 0.741176, 1)
+Button/constants/outline_size = 3
+Button/font_sizes/font_size = 34
+Button/fonts/font = ExtResource("2_font")
+Button/styles/focus = SubResource("StyleBoxFlat_button_hover")
+Button/styles/hover = SubResource("StyleBoxFlat_button_hover")
+Button/styles/normal = SubResource("StyleBoxFlat_button_normal")
+Button/styles/pressed = SubResource("StyleBoxFlat_button_pressed")
 
-[node name="Label" type="Label" parent="level_01"]
-layout_mode = 0
+[node name="subtitle" type="Control"]
+layout_mode = 3
+anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.337255, 0.160784, 0.0588235, 1)
-theme_override_colors/font_outline_color = Color(1, 0.929412, 0.741176, 1)
-theme_override_constants/outline_size = 3
-theme_override_fonts/font = ExtResource("5_vxwt6")
-theme_override_font_sizes/font_size = 50
-text = "1"
-horizontal_alignment = 1
-vertical_alignment = 1
 
-[node name="level_02" type="TextureButton" parent="."]
-offset_left = 321.0
-offset_top = 622.0
-offset_right = 1659.0
-offset_bottom = 923.0
-texture_normal = ExtResource("2_l25p0")
-texture_pressed = ExtResource("3_p1oqa")
-stretch_mode = 4
-script = ExtResource("4_d6g1b")
-scene_path = "res://main_scene/bridge_build2.tscn"
-
-[node name="Label" type="Label" parent="level_02"]
+[node name="Background" type="TextureRect" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_colors/font_color = Color(0.337255, 0.160784, 0.0588235, 1)
-theme_override_colors/font_outline_color = Color(1, 0.929412, 0.741176, 1)
-theme_override_constants/outline_size = 3
-theme_override_fonts/font = ExtResource("5_vxwt6")
-theme_override_font_sizes/font_size = 50
+mouse_filter = 2
+texture = ExtResource("1_bg")
+expand_mode = 1
+stretch_mode = 6
+
+[node name="ButtonScroll" type="ScrollContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 220.0
+offset_top = 150.0
+offset_right = -220.0
+offset_bottom = -90.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = SubResource("Theme_level_buttons")
+
+[node name="ButtonGrid" type="GridContainer" parent="ButtonScroll"]
+layout_mode = 2
+size_flags_horizontal = 4
+theme_override_constants/h_separation = 55
+theme_override_constants/v_separation = 38
+columns = 8
+
+[node name="LevelButton01" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "1"
+
+[node name="LevelButton02" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
 text = "2"
-horizontal_alignment = 1
-vertical_alignment = 1
+
+[node name="LevelButton03" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "3"
+
+[node name="LevelButton04" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "4"
+
+[node name="LevelButton05" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "5"
+
+[node name="LevelButton06" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "6"
+
+[node name="LevelButton07" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "7"
+
+[node name="LevelButton08" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "8"
+
+[node name="LevelButton09" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "9"
+
+[node name="LevelButton10" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "10"
+
+[node name="LevelButton11" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "11"
+
+[node name="LevelButton12" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "12"
+
+[node name="LevelButton13" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "13"
+
+[node name="LevelButton14" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "14"
+
+[node name="LevelButton15" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "15"
+
+[node name="LevelButton16" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "16"
+
+[node name="LevelButton17" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "17"
+
+[node name="LevelButton18" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "18"
+
+[node name="LevelButton19" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "19"
+
+[node name="LevelButton20" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "20"
+
+[node name="LevelButton21" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "21"
+
+[node name="LevelButton22" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "22"
+
+[node name="LevelButton23" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "23"
+
+[node name="LevelButton24" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "24"
+
+[node name="LevelButton25" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "25"
+
+[node name="LevelButton26" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "26"
+
+[node name="LevelButton27" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "27"
+
+[node name="LevelButton28" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "28"
+
+[node name="LevelButton29" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "29"
+
+[node name="LevelButton30" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "30"
+
+[node name="LevelButton31" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "31"
+
+[node name="LevelButton32" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "32"
+
+[node name="LevelButton33" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "33"
+
+[node name="LevelButton34" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "34"
+
+[node name="LevelButton35" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "35"
+
+[node name="LevelButton36" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "36"
+
+[node name="LevelButton37" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "37"
+
+[node name="LevelButton38" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "38"
+
+[node name="LevelButton39" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "39"
+
+[node name="LevelButton40" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "40"
+
+[node name="LevelButton41" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "41"
+
+[node name="LevelButton42" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "42"
+
+[node name="LevelButton43" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "43"
+
+[node name="LevelButton44" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "44"
+
+[node name="LevelButton45" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "45"
+
+[node name="LevelButton46" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "46"
+
+[node name="LevelButton47" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "47"
+
+[node name="LevelButton48" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "48"
+
+[node name="LevelButton49" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "49"
+
+[node name="LevelButton50" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "50"
+
+[node name="LevelButton51" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "51"
+
+[node name="LevelButton52" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "52"
+
+[node name="LevelButton53" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "53"
+
+[node name="LevelButton54" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "54"
+
+[node name="LevelButton55" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "55"
+
+[node name="LevelButton56" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "56"
+
+[node name="LevelButton57" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "57"
+
+[node name="LevelButton58" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "58"
+
+[node name="LevelButton59" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "59"
+
+[node name="LevelButton60" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "60"
+
+[node name="LevelButton61" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "61"
+
+[node name="LevelButton62" type="Button" parent="ButtonScroll/ButtonGrid"]
+custom_minimum_size = Vector2(120, 90)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+text = "62"

@@ -1,0 +1,23 @@
+{
+	"schema_version": 1,
+	"users": {
+		"admin": {
+			"focus_baseline": 50.0,
+			"level_success_attempts": {
+
+			},
+			"password": "123456",
+			"total_play_time_seconds": 0.0,
+			"username": "admin"
+		},
+		"demo": {
+			"focus_baseline": 50.0,
+			"level_success_attempts": {
+
+			},
+			"password": "123456",
+			"total_play_time_seconds": 0.0,
+			"username": "demo"
+		}
+	}
+}

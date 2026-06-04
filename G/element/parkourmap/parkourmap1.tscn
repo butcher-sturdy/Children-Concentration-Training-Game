@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=4 uid="uid://frg4gunjf81"]
+[gd_scene load_steps=3 format=4 uid="uid://c2wi3el0y7sax"]
 
 [ext_resource type="PackedScene" uid="uid://c15xq8r0f4den" path="res://element/gizmo/spring_pad.tscn" id="1_p80ww"]
 [ext_resource type="TileSet" uid="uid://58yoiqggeb7r" path="res://element/texture/map.tres" id="2_p2wre"]
