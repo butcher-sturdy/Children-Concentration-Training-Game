@@ -1,51 +1,19 @@
 extends Node2D
 class_name BridgeBuildAnswerHint
 
-# 这个脚本负责：
-# 1. 读取 / 保存每个 bridgebuild 关卡的答案，也就是平台放置位置。
-# 2. 创建“记录答案 / 保存答案”按钮，用来进入或退出答案存储模式。
-# 3. 在普通游戏模式下按 P 键，按保存顺序逐步显示平台提示。
-#
-# 存储模式使用方式：
-# - 点击“记录答案”进入存储模式。
-# - 在存储模式中放置的平台会按放置顺序记录，这个顺序就是之后的提示顺序。
-# - 右键点击平台所在位置，可以删除该平台记录。
-# - 再次点击“保存答案”，本次存储模式的平台会消失，但坐标会保存到 ANSWER_SAVE_PATH。
-# - 以后再次点击“记录答案”，会先把已保存记录生成出来，方便继续修改。
 
 const ANSWER_SAVE_PATH: String = "res://script/bridge_build_answers.json"
 const STORAGE_PLATFORM_META: String = "bridge_build_answer_storage_platform"
 
-# 当答案文件不存在，或某关还没保存答案时，会使用这里的默认答案。
-# 修改格式：每个关卡路径对应一个 Vector2 数组，数组顺序就是提示顺序。
-const DEFAULT_LEVEL_ANSWERS := {
-	"res://main_scene/bridge_build1.tscn": [
-		Vector2(854, 825.00006),
-		Vector2(852.00006, 489.00006),
-	],
-	"res://main_scene/bridge_build2.tscn": [
-		Vector2(520, 870),
-		Vector2(1287, 101),
-		Vector2(1172, 535),
-	],
-	"res://main_scene/bridge_build4.tscn": [],
-	"res://main_scene/bridge_build5.tscn": [
-		Vector2(781, 918),
-		Vector2(948.00006, 343),
-	],
-	"res://main_scene/bridge_build_city_1.tscn": [],
-	"res://main_scene/bridge_build_city_2.tscn": [],
-}
-
-# 如需某个场景临时不用答案文件，可以在检查器里手动填这里覆盖。
+# Optional per-scene override. Leave empty to use bridge_build_answers.json.
 @export var override_answer_positions: Array[Vector2] = []
 
-# 提示触发：默认内置条件满足，只需要按 P 对应的输入映射动作。
+# Hint input and trigger condition.
 @export var hint_action: String = "p"
 @export var use_focus_condition: bool = false
 @export var focus_trigger_threshold: float = 75.0
 
-# 提示显示参数。flash_count = 5 对应“闪烁 5 次”。
+# Hint display settings.
 @export var hint_alpha: float = 0.42
 @export var flash_low_alpha: float = 0.12
 @export var flash_high_alpha: float = 0.82
@@ -53,17 +21,9 @@ const DEFAULT_LEVEL_ANSWERS := {
 @export var flash_half_interval: float = 0.12
 @export var hint_z_index: int = 20
 
-# 第一次触发会让第一块平台闪烁；后续触发默认显示新平台，并让上一块平台闪烁。
-@export var flash_previous_hint: bool = true
-@export var flash_new_hint_after_first: bool = false
-
-# 自动隐藏旧的黄色答案标记，避免游戏开始就暴露答案。
-@export var hide_answer_marker_nodes: bool = true
-@export var use_marker_nodes_when_missing: bool = true
-
-# 存储按钮位置。默认放在右上角，避免挡住左上角开始按钮。
-@export var storage_button_text: String = "记录答案"
-@export var saving_button_text: String = "保存答案"
+# Runtime answer-recording button settings.
+@export var storage_button_text: String = "Record Answer"
+@export var saving_button_text: String = "Save Answer"
 @export var storage_button_offset: Vector2 = Vector2(-220, 40)
 @export var storage_button_size: Vector2 = Vector2(170, 54)
 
@@ -88,9 +48,6 @@ func _ready() -> void:
 	_load_answers_for_current_scene()
 	_create_storage_button()
 
-	if hide_answer_marker_nodes:
-		_hide_answer_markers()
-
 func _process(_delta: float) -> void:
 	if storage_mode_enabled:
 		return
@@ -102,7 +59,7 @@ func _process(_delta: float) -> void:
 
 func trigger_hint() -> void:
 	if answer_positions.is_empty():
-		print("当前关卡没有可提示的平台答案。")
+		print("No saved bridge build answer hints for the current scene.")
 		return
 	if platform_spawner == null or is_flashing:
 		return
@@ -116,11 +73,7 @@ func trigger_hint() -> void:
 			return
 
 		hint_visuals.append(new_visual)
-
-		if revealed_index == 0 or flash_new_hint_after_first:
-			flash_indices.append(revealed_index)
-		if flash_previous_hint and revealed_index > 0:
-			flash_indices.append(revealed_index - 1)
+		flash_indices.append(revealed_index)
 
 		next_hint_index += 1
 	else:
@@ -136,7 +89,7 @@ func toggle_storage_mode() -> void:
 
 func _enter_storage_mode() -> void:
 	if platform_spawner == null:
-		print("未找到 platform_spawn 节点，无法进入答案存储模式。")
+		print("Cannot enter answer storage mode: platform_spawn was not found.")
 		return
 
 	storage_mode_enabled = true
@@ -145,7 +98,7 @@ func _enter_storage_mode() -> void:
 	editing_positions.clear()
 	editing_platforms.clear()
 
-	# 进入存储模式时，把之前保存的答案重新生成出来，方便右键删除或继续添加。
+	# Recreate saved answer platforms for editing without recording them again.
 	ignore_spawn_signal = true
 	for saved_position in answer_positions:
 		var platform := platform_spawner.call("spawn_platform", saved_position) as Node2D
@@ -154,7 +107,7 @@ func _enter_storage_mode() -> void:
 	ignore_spawn_signal = false
 
 	_update_storage_button()
-	print("进入答案存储模式。左键放置记录，右键删除鼠标位置的平台记录。")
+	print("Entered answer storage mode.")
 
 func _exit_storage_mode() -> void:
 	var saved_positions: Array[Vector2] = []
@@ -171,7 +124,7 @@ func _exit_storage_mode() -> void:
 	next_hint_index = 0
 
 	_update_storage_button()
-	print("答案已保存，存储模式平台已隐藏。")
+	print("Answer positions saved.")
 
 func _connect_platform_spawner() -> void:
 	if platform_spawner == null:
@@ -245,16 +198,6 @@ func _load_answers_for_current_scene() -> void:
 			answer_positions.append(saved_position)
 		return
 
-	if DEFAULT_LEVEL_ANSWERS.has(scene_path):
-		for default_position in DEFAULT_LEVEL_ANSWERS[scene_path]:
-			answer_positions.append(default_position)
-		if not answer_positions.is_empty() or not use_marker_nodes_when_missing:
-			return
-
-	if use_marker_nodes_when_missing:
-		for marker_position in _get_marker_answer_positions():
-			answer_positions.append(marker_position)
-
 func _save_answers_for_current_scene(positions: Array[Vector2]) -> void:
 	var scene_path := _get_current_scene_path()
 	if scene_path.is_empty():
@@ -265,12 +208,12 @@ func _save_answers_for_current_scene(positions: Array[Vector2]) -> void:
 
 	var file := FileAccess.open(ANSWER_SAVE_PATH, FileAccess.WRITE)
 	if file == null:
-		print("答案文件写入失败：", ANSWER_SAVE_PATH)
+		print("Failed to write bridge build answer file: ", ANSWER_SAVE_PATH)
 		return
 
 	file.store_string(JSON.stringify(all_answers, "\t"))
 	file.close()
-	print("答案已写入：", ProjectSettings.globalize_path(ANSWER_SAVE_PATH))
+	print("绛旀宸插啓鍏ワ細", ProjectSettings.globalize_path(ANSWER_SAVE_PATH))
 
 func _load_answer_file() -> Dictionary:
 	if not FileAccess.file_exists(ANSWER_SAVE_PATH):
@@ -336,7 +279,7 @@ func _create_storage_button() -> void:
 	storage_button.offset_right = storage_button_offset.x + storage_button_size.x
 	storage_button.offset_bottom = storage_button_offset.y + storage_button_size.y
 	storage_button.text = storage_button_text
-	storage_button.tooltip_text = "进入/保存 bridgebuild 平台答案存储模式"
+	storage_button.tooltip_text = "杩涘叆/淇濆瓨 bridgebuild 骞冲彴绛旀瀛樺偍妯″紡"
 	storage_button.pressed.connect(Callable(self, "toggle_storage_mode"))
 	canvas_layer.add_child(storage_button)
 
@@ -477,55 +420,3 @@ func _get_current_scene_path() -> String:
 	if current_scene == null:
 		return ""
 	return current_scene.scene_file_path
-
-func _get_marker_answer_positions() -> Array[Vector2]:
-	var markers := _get_answer_marker_nodes()
-	var positions: Array[Vector2] = []
-	for marker in markers:
-		positions.append(marker.global_position)
-	return positions
-
-func _get_answer_marker_nodes() -> Array[Node2D]:
-	var current_scene := get_tree().current_scene
-	if current_scene == null:
-		var empty_markers: Array[Node2D] = []
-		return empty_markers
-
-	var markers: Array[Node2D] = []
-	var marker_root := current_scene.get_node_or_null("platform_position")
-	if marker_root != null:
-		_collect_node2d_children(marker_root, markers)
-	else:
-		_collect_named_markers(current_scene, markers)
-
-	markers.sort_custom(func(a: Node2D, b: Node2D) -> bool:
-		return str(a.name).naturalnocasecmp_to(str(b.name)) < 0
-	)
-	return markers
-
-func _collect_node2d_children(node: Node, markers: Array[Node2D]) -> void:
-	for child in node.get_children():
-		var child_2d := child as Node2D
-		if child_2d != null:
-			markers.append(child_2d)
-
-func _collect_named_markers(node: Node, markers: Array[Node2D]) -> void:
-	if str(node.name).begins_with("FlagYellow"):
-		var marker := node as Node2D
-		if marker != null:
-			markers.append(marker)
-
-	for child in node.get_children():
-		_collect_named_markers(child, markers)
-
-func _hide_answer_markers() -> void:
-	for marker in _get_answer_marker_nodes():
-		marker.visible = false
-
-	var current_scene := get_tree().current_scene
-	if current_scene == null:
-		return
-
-	var marker_root := current_scene.get_node_or_null("platform_position") as CanvasItem
-	if marker_root != null:
-		marker_root.visible = false

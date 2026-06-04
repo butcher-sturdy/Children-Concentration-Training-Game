@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://oihm2kxu0fs3"]
+
+[ext_resource type="Script" path="res://script/strawberry.gd" id="1_jbdv5"]
+[ext_resource type="Texture2D" uid="uid://brn7nlw5x3q8c" path="res://asset/1/sprites/fruit.png" id="2_4unda"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0p87u"]
+size = Vector2(45, 43)
+
+[node name="Strawberry" type="Area2D" unique_id=1976276223]
+script = ExtResource("1_jbdv5")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=214713780]
+scale = Vector2(3.1666665, 3.2142859)
+texture = ExtResource("2_4unda")
+region_enabled = true
+region_rect = Rect2(0, 49.425842, 15.695488, 14.574158)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1448819784]
+shape = SubResource("RectangleShape2D_0p87u")

@@ -1,4 +1,4 @@
-﻿计算机软件著作权登记申请材料（草案）
+计算机软件著作权登记申请材料（草案）
 
 材料名称：儿童专注力训练游戏软件 V1.0 软件著作权登记书面材料
 软件全称：儿童专注力训练游戏软件
@@ -115,7 +115,7 @@
 对应 player_parkour.gd、parkour_random_loop.gd、platform_elevator_grass.gd、platform_elevator_city.gd、reverse_direction_pad.gd、spring_pad.gd、heart_life_display.gd 等。模块支持角色自动奔跑、手动移动、跳跃、重力、碰撞、障碍扣血、掉落回退、生命值显示、弹簧垫、反向垫、升降平台、随机平台循环和终点跳转。专注度达到设定阈值时，角色可进入无敌或飞行状态，并提高移动速度。
 
 4.6 搭桥训练模块
-对应 platform_spawn.gd、bridge_build_answer_hint.gd、bridge_build_answers.json、bridge_build1.tscn 至 bridge_build10.tscn、bridge_build_city_1.tscn 至 bridge_build_city_10.tscn。用户通过鼠标或键盘在网格位置生成平台，系统检测平台数量、重叠、障碍碰撞和合法放置区域。平台的透明度和碰撞状态与专注度阈值绑定，专注度越高，平台越接近实体状态。答案提示模块支持记录答案坐标、读取关卡答案、按 P 键或专注度条件触发提示闪烁。
+对应 platform_spawn.gd、bridge_build_answer_hint.gd、bridge_build_answers.json、bridgebuildgrass1.tscn 至 bridgebuildgrass10.tscn、bridge_build_city_1.tscn 至 bridge_build_city_10.tscn。用户通过鼠标或键盘在网格位置生成平台，系统检测平台数量、重叠、障碍碰撞和合法放置区域。平台的透明度和碰撞状态与专注度阈值绑定，专注度越高，平台越接近实体状态。答案提示模块支持记录答案坐标、读取关卡答案、按 P 键或专注度条件触发提示闪烁。
 
 4.7 42 个扩展关卡模块
 本次申请范围纳入 42 个其他训练关卡。扩展关卡建议按以下结构整理并提交：

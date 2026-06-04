@@ -1,4 +1,4 @@
-extends TextureButton
+extends Button
 
 @export_file("*.tscn") var scene_path: String = ""
 

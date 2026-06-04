@@ -22,12 +22,13 @@ const FOCUS_BASE_MODULATE_META: String = "focus_feedback_base_modulate"
 @export_range(0.0, 1.0, 0.01) var focus_forming_alpha_start: float = 0.65
 @export_range(0.0, 1.0, 0.01) var focus_forming_alpha_end: float = 0.95
 
-# 为 Vector2.ZERO 时，自动使用统一的短距离作为一格大小。
+# 为 Vector2.ZERO 时，自动使用统一的短距离作为速度标尺。
 @export var grid_step: Vector2 = Vector2.ZERO
 @export var grid_origin: Vector2 = Vector2(385, 430)
 @export var initial_cursor_position: Vector2 = Vector2(385, 430)
-@export var held_move_initial_delay: float = 0.25
 @export var held_move_repeat_interval: float = 0.08
+@export var snap_cursor_to_grid: bool = false
+@export var smooth_keyboard_cursor_movement: bool = true
 @export var use_mouse_position_for_mouse_actions: bool = true
 
 # 最大生成数量
@@ -36,11 +37,11 @@ var current_platform_count: int = 0
 
 var space_state: PhysicsDirectSpaceState2D
 var cursor_position: Vector2 = Vector2.ZERO
+var displayed_cursor_position: Vector2 = Vector2.ZERO
 var placed_platform_rects: Array[Rect2] = []
 var placed_platform_positions: Array[Vector2] = []
 var placed_platform_nodes: Array[Node2D] = []
 var held_move_direction: Vector2 = Vector2.ZERO
-var held_move_timer: float = 0.0
 var keyboard_cursor_active: bool = false
 var last_mouse_position: Vector2 = Vector2.ZERO
 var preview_texture: Texture2D
@@ -55,7 +56,8 @@ var placement_rect_size: Vector2 = Vector2.ZERO
 func _ready() -> void:
 	space_state = get_world_2d().direct_space_state
 	refresh_preview_texture()
-	cursor_position = snap_to_grid(initial_cursor_position)
+	cursor_position = get_cursor_input_position(initial_cursor_position)
+	displayed_cursor_position = cursor_position
 	last_mouse_position = get_viewport().get_mouse_position()
 	install_answer_hint()
 	queue_redraw()
@@ -108,9 +110,11 @@ func _process(delta: float) -> void:
 	update_cursor_control_mode()
 
 	if use_mouse_position_for_mouse_actions and not keyboard_cursor_active:
-		cursor_position = snap_to_grid(get_global_mouse_position())
+		cursor_position = get_cursor_input_position(get_global_mouse_position())
+		displayed_cursor_position = cursor_position
 	else:
 		update_held_move(delta)
+		update_displayed_cursor_position(delta)
 	update_platform_focus_states()
 	queue_redraw()
 
@@ -120,28 +124,36 @@ func _process(delta: float) -> void:
 	if Input.is_action_just_pressed("mouse_right") and not is_mouse_over_gui():
 		remove_platform_at(get_mouse_action_position())
 
-func move_cursor(direction: Vector2) -> void:
-	cursor_position = snap_to_grid(cursor_position + direction * get_grid_step())
-	queue_redraw()
-
 func start_held_move(direction: Vector2) -> void:
 	keyboard_cursor_active = true
 	held_move_direction = direction
-	held_move_timer = held_move_initial_delay
-	move_cursor(direction)
 
 func update_held_move(delta: float) -> void:
 	if held_move_direction == Vector2.ZERO:
 		return
 	if not is_held_move_key_pressed():
 		held_move_direction = Vector2.ZERO
-		held_move_timer = 0.0
 		return
 
-	held_move_timer -= delta
-	if held_move_timer <= 0.0:
-		move_cursor(held_move_direction)
-		held_move_timer = held_move_repeat_interval
+	cursor_position += get_keyboard_cursor_velocity(held_move_direction) * delta
+
+func update_displayed_cursor_position(delta: float) -> void:
+	if not smooth_keyboard_cursor_movement:
+		displayed_cursor_position = cursor_position
+		return
+
+	var max_distance := get_cursor_visual_speed() * delta
+	displayed_cursor_position = displayed_cursor_position.move_toward(cursor_position, max_distance)
+
+func get_cursor_visual_speed() -> float:
+	var step := get_grid_step()
+	var step_distance := maxf(absf(step.x), absf(step.y))
+	return step_distance / maxf(held_move_repeat_interval, 0.001)
+
+func get_keyboard_cursor_velocity(direction: Vector2) -> Vector2:
+	var step := get_grid_step()
+	var interval := maxf(held_move_repeat_interval, 0.001)
+	return Vector2(direction.x * step.x, direction.y * step.y) / interval
 
 func is_held_move_key_pressed() -> bool:
 	if held_move_direction == Vector2.LEFT:
@@ -158,7 +170,8 @@ func get_mouse_action_position() -> Vector2:
 	# 鼠标输入动作默认使用真实鼠标位置；如需恢复旧的键盘光标逻辑，
 	# 可在检查器里关闭 use_mouse_position_for_mouse_actions。
 	if use_mouse_position_for_mouse_actions:
-		cursor_position = snap_to_grid(get_global_mouse_position())
+		cursor_position = get_cursor_input_position(get_global_mouse_position())
+		displayed_cursor_position = cursor_position
 		keyboard_cursor_active = false
 	return cursor_position
 
@@ -283,9 +296,6 @@ func get_platform_index_at(spawn_pos: Vector2) -> int:
 		if placed_rect.has_point(target_center) or placed_rect.intersects(target_rect, true):
 			return index
 
-		if placed_platform_positions[index].distance_to(spawn_pos) <= get_grid_step().length() * 0.5:
-			return index
-
 	return -1
 
 func get_platform_rect(spawn_pos: Vector2) -> Rect2:
@@ -313,6 +323,11 @@ func get_grid_step() -> Vector2:
 	var footprint: Vector2 = get_platform_footprint_size()
 	var step_length: float = minf(footprint.x, footprint.y) * 0.5
 	return Vector2(step_length, step_length)
+
+func get_cursor_input_position(raw_pos: Vector2) -> Vector2:
+	if snap_cursor_to_grid:
+		return snap_to_grid(raw_pos)
+	return raw_pos
 
 func snap_to_grid(raw_pos: Vector2) -> Vector2:
 	var step: Vector2 = get_grid_step()
@@ -544,7 +559,7 @@ func _draw() -> void:
 	if draw_size.x <= 0.0 or draw_size.y <= 0.0:
 		draw_size = get_platform_footprint_size()
 
-	var draw_rect: Rect2 = Rect2(to_local(cursor_position + preview_draw_offset), draw_size)
+	var draw_rect: Rect2 = Rect2(to_local(displayed_cursor_position + preview_draw_offset), draw_size)
 	if preview_region_enabled:
 		draw_texture_rect_region(preview_texture, draw_rect, preview_region_rect, preview_color)
 	else:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=4 uid="uid://bu2u7ny1msvgf"]
+[gd_scene load_steps=12 format=4 uid="uid://csofnxrwnmopl"]
 
 [ext_resource type="Script" uid="uid://ctvmqh0leuslo" path="res://script/pause_menu_controller.gd" id="1_cnlwn"]
 [ext_resource type="TileSet" uid="uid://58yoiqggeb7r" path="res://element/texture/map.tres" id="2_pwgky"]
