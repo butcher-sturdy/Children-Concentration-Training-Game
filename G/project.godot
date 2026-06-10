@@ -11,12 +11,13 @@ config_version=5
 [application]
 
 config/name="Children's Concentration Training Games"
-run/main_scene="uid://hy0wq52r576w"
+run/main_scene="res://main_scene/login.tscn"
 config/features=PackedStringArray("4.5", "Forward Plus")
 
 [autoload]
 
 concentration="*res://script/concentration.gd"
+game_session="*res://script/game_session.gd"
 
 [display]
 

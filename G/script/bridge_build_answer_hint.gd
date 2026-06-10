@@ -12,6 +12,14 @@ const STORAGE_PLATFORM_META: String = "bridge_build_answer_storage_platform"
 @export var hint_action: String = "p"
 @export var use_focus_condition: bool = false
 @export var focus_trigger_threshold: float = 75.0
+@export var failure_hint_threshold: int = 3
+@export var impatient_early_hint_offset: int = 1
+@export var emotion_file_path: String = "C:/Users/ASUS/Desktop/emotion.txt"
+@export var emotion_read_interval: float = 0.25
+@export var emotion_trigger_threshold: float = 7.25
+@export var emotion_release_threshold: float = 6.4
+@export var emotion_smoothing_seconds: float = 1.2
+@export var impatient_required_seconds: float = 2.5
 
 # Hint display settings.
 @export var hint_alpha: float = 0.42
@@ -32,6 +40,16 @@ var hint_visuals: Array[Node2D] = []
 var next_hint_index: int = 0
 var is_flashing: bool = false
 var active_flash_tween_count: int = 0
+var pending_hint_target_count: int = 0
+
+var emotion_read_timer: float = 0.0
+var raw_emotion_level: float = 0.0
+var smoothed_emotion_level: float = 0.0
+var has_emotion_sample: bool = false
+var impatient_hold_seconds: float = 0.0
+var sustained_impatient: bool = false
+var last_known_failure_count: int = 0
+var auto_hint_start_failure: int = 0
 
 var storage_mode_enabled: bool = false
 var editing_positions: Array[Vector2] = []
@@ -45,12 +63,16 @@ var storage_button: Button
 func _ready() -> void:
 	platform_spawner = _find_platform_spawner()
 	_connect_platform_spawner()
+	_connect_game_session()
 	_load_answers_for_current_scene()
 	_create_storage_button()
+	call_deferred("_sync_failure_count_from_session")
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
 	if storage_mode_enabled:
 		return
+	_update_emotion_state(delta)
+	_maybe_trigger_auto_hint()
 	if not _hint_input_pressed():
 		return
 	if not _hint_condition_met():
@@ -58,15 +80,36 @@ func _process(_delta: float) -> void:
 	trigger_hint()
 
 func trigger_hint() -> void:
+	if next_hint_index < answer_positions.size():
+		reveal_hints_up_to(next_hint_index + 1, true)
+		return
 	if answer_positions.is_empty():
 		print("No saved bridge build answer hints for the current scene.")
 		return
 	if platform_spawner == null or is_flashing:
 		return
 
-	var flash_indices: Array[int] = []
+	if not hint_visuals.is_empty():
+		_flash_hint_indices([hint_visuals.size() - 1])
 
-	if next_hint_index < answer_positions.size():
+func reveal_hints_up_to(target_count: int, report_missing: bool = false) -> void:
+	if answer_positions.is_empty():
+		if report_missing:
+			print("No saved bridge build answer hints for the current scene.")
+		return
+	if platform_spawner == null:
+		return
+
+	var clamped_target := clampi(target_count, 0, answer_positions.size())
+	if clamped_target <= next_hint_index:
+		return
+
+	if is_flashing:
+		pending_hint_target_count = maxi(pending_hint_target_count, clamped_target)
+		return
+
+	var flash_indices: Array[int] = []
+	while next_hint_index < clamped_target:
 		var revealed_index := next_hint_index
 		var new_visual := _create_hint_visual(answer_positions[revealed_index])
 		if new_visual == null:
@@ -74,12 +117,117 @@ func trigger_hint() -> void:
 
 		hint_visuals.append(new_visual)
 		flash_indices.append(revealed_index)
-
 		next_hint_index += 1
-	else:
-		flash_indices.append(hint_visuals.size() - 1)
 
 	_flash_hint_indices(flash_indices)
+
+func _connect_game_session() -> void:
+	add_to_group("bridge_hint")
+	var session := get_node_or_null("/root/game_session")
+	if session == null:
+		return
+	if session.has_signal("bridge_level_started"):
+		var started_callable := Callable(self, "_on_bridge_level_started")
+		if not session.is_connected("bridge_level_started", started_callable):
+			session.connect("bridge_level_started", started_callable)
+	if session.has_method("get_bridge_failure_count"):
+		last_known_failure_count = int(session.call("get_bridge_failure_count"))
+	if session.has_signal("bridge_failure_recorded"):
+		var failure_callable := Callable(self, "_on_bridge_failure_recorded")
+		if not session.is_connected("bridge_failure_recorded", failure_callable):
+			session.connect("bridge_failure_recorded", failure_callable)
+
+func _on_bridge_level_started(level_path: String, failure_count: int) -> void:
+	if level_path != _get_current_scene_path():
+		return
+	_reset_runtime_hint_state(failure_count, true)
+
+func _on_bridge_failure_recorded(failure_count: int) -> void:
+	last_known_failure_count = failure_count
+	_maybe_trigger_auto_hint()
+
+func _sync_failure_count_from_session() -> void:
+	var session := get_node_or_null("/root/game_session")
+	if session == null or not session.has_method("get_bridge_failure_count"):
+		return
+
+	var failure_count := int(session.call("get_bridge_failure_count"))
+	if failure_count <= 0:
+		_reset_runtime_hint_state(0, true)
+		return
+
+	last_known_failure_count = failure_count
+	_maybe_trigger_auto_hint()
+
+func _reset_runtime_hint_state(failure_count: int = 0, clear_visuals: bool = true) -> void:
+	last_known_failure_count = maxi(failure_count, 0)
+	next_hint_index = 0
+	pending_hint_target_count = 0
+	auto_hint_start_failure = 0
+	if clear_visuals:
+		_clear_hint_visuals()
+
+func _maybe_trigger_auto_hint() -> void:
+	if storage_mode_enabled:
+		return
+	var start_failure := auto_hint_start_failure
+	if start_failure <= 0:
+		start_failure = _get_auto_hint_start_failure()
+	if last_known_failure_count < start_failure:
+		return
+
+	if auto_hint_start_failure <= 0:
+		auto_hint_start_failure = start_failure
+	var target_count := last_known_failure_count - start_failure + 1
+	reveal_hints_up_to(target_count)
+
+func _get_auto_hint_start_failure() -> int:
+	var base_threshold := maxi(failure_hint_threshold, 1)
+	if sustained_impatient:
+		return maxi(base_threshold - maxi(impatient_early_hint_offset, 0), 1)
+	return base_threshold
+
+func _update_emotion_state(delta: float) -> void:
+	emotion_read_timer += delta
+	if emotion_read_timer >= emotion_read_interval:
+		emotion_read_timer = 0.0
+		_read_emotion_level()
+
+	if not has_emotion_sample:
+		return
+
+	var alpha := 1.0 - exp(-delta / maxf(emotion_smoothing_seconds, 0.001))
+	smoothed_emotion_level = lerpf(smoothed_emotion_level, raw_emotion_level, clampf(alpha, 0.0, 1.0))
+
+	if smoothed_emotion_level >= emotion_trigger_threshold:
+		impatient_hold_seconds += delta
+	elif smoothed_emotion_level <= emotion_release_threshold:
+		impatient_hold_seconds = 0.0
+	else:
+		impatient_hold_seconds = maxf(impatient_hold_seconds - delta * 0.5, 0.0)
+
+	var was_sustained := sustained_impatient
+	sustained_impatient = impatient_hold_seconds >= impatient_required_seconds
+	if sustained_impatient and not was_sustained:
+		_maybe_trigger_auto_hint()
+
+func _read_emotion_level() -> void:
+	if emotion_file_path.is_empty() or not FileAccess.file_exists(emotion_file_path):
+		return
+
+	var file := FileAccess.open(emotion_file_path, FileAccess.READ)
+	if file == null:
+		return
+
+	var content := file.get_as_text().strip_edges()
+	file.close()
+	if not content.is_valid_float():
+		return
+
+	raw_emotion_level = clampf(float(content), 0.0, 10.0)
+	if not has_emotion_sample:
+		smoothed_emotion_level = raw_emotion_level
+		has_emotion_sample = true
 
 func toggle_storage_mode() -> void:
 	if storage_mode_enabled:
@@ -183,8 +331,7 @@ func _clear_editing_platforms() -> void:
 
 func _load_answers_for_current_scene() -> void:
 	answer_positions.clear()
-	next_hint_index = 0
-	_clear_hint_visuals()
+	_reset_runtime_hint_state(0, true)
 
 	if not override_answer_positions.is_empty():
 		for answer_position in override_answer_positions:
@@ -213,7 +360,7 @@ func _save_answers_for_current_scene(positions: Array[Vector2]) -> void:
 
 	file.store_string(JSON.stringify(all_answers, "\t"))
 	file.close()
-	print("绛旀宸插啓鍏ワ細", ProjectSettings.globalize_path(ANSWER_SAVE_PATH))
+	print("Saved bridge build answer hints: ", ProjectSettings.globalize_path(ANSWER_SAVE_PATH))
 
 func _load_answer_file() -> Dictionary:
 	if not FileAccess.file_exists(ANSWER_SAVE_PATH):
@@ -279,7 +426,7 @@ func _create_storage_button() -> void:
 	storage_button.offset_right = storage_button_offset.x + storage_button_size.x
 	storage_button.offset_bottom = storage_button_offset.y + storage_button_size.y
 	storage_button.text = storage_button_text
-	storage_button.tooltip_text = "杩涘叆/淇濆瓨 bridgebuild 骞冲彴绛旀瀛樺偍妯″紡"
+	storage_button.tooltip_text = "Record bridge-build answer hint positions for this level."
 	storage_button.pressed.connect(Callable(self, "toggle_storage_mode"))
 	canvas_layer.add_child(storage_button)
 
@@ -343,6 +490,12 @@ func _on_hint_flash_finished() -> void:
 	if active_flash_tween_count <= 0:
 		active_flash_tween_count = 0
 		is_flashing = false
+		if pending_hint_target_count > next_hint_index:
+			var target_count := pending_hint_target_count
+			pending_hint_target_count = 0
+			call_deferred("reveal_hints_up_to", target_count, false)
+		else:
+			pending_hint_target_count = 0
 
 func _clear_hint_visuals() -> void:
 	for visual in hint_visuals:

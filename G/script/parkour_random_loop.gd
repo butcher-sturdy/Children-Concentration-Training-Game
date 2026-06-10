@@ -1,6 +1,5 @@
 extends Node2D
 
-const START_SEGMENT: PackedScene = preload("res://element/parkourmap/parkourmap1.tscn")
 const SEGMENT_SCENES: Array[PackedScene] = [
 	preload("res://element/parkourmap/parkourmap1.tscn"),
 	preload("res://element/parkourmap/parkourmap2.tscn"),
@@ -34,14 +33,20 @@ const KILLZONE_SCRIPT: Script = preload("res://script/killzone.gd")
 var playable_segments: Array[PackedScene] = []
 var segment_bag: Array[PackedScene] = []
 var active_segments: Array[Node2D] = []
+var start_segment_scene: PackedScene
 var last_segment_scene: PackedScene
 var next_segment_x := 0.0
-var next_surface_y := 0.0
 var last_player_x := 0.0
+var player_start_position := Vector2.ZERO
+var player_ground_offset_y := 0.0
+var fixed_segment_y := 0.0
+var has_fixed_segment_y := false
 
 
 func _ready() -> void:
 	randomize()
+	player_start_position = player.position
+	player_ground_offset_y = starting_ground_y - player_start_position.y
 	_collect_playable_segments()
 	_rebuild_course()
 	last_player_x = player.position.x
@@ -62,13 +67,25 @@ func _process(_delta: float) -> void:
 
 func _collect_playable_segments() -> void:
 	playable_segments.clear()
-	for scene in SEGMENT_SCENES:
+	var configured_segments := _get_configured_segment_scenes()
+	start_segment_scene = configured_segments[0] if not configured_segments.is_empty() else null
+
+	for scene in configured_segments:
 		var instance := scene.instantiate()
 		if _contains_tiles(instance):
 			playable_segments.append(scene)
 		else:
 			push_warning("Skipping empty parkour segment: %s" % scene.resource_path)
 		instance.free()
+
+	if playable_segments.is_empty():
+		push_warning("No playable parkour segments were found in the selected pool. Falling back to all segments.")
+		for scene in SEGMENT_SCENES:
+			var instance := scene.instantiate()
+			if _contains_tiles(instance):
+				playable_segments.append(scene)
+			instance.free()
+		start_segment_scene = playable_segments[0] if not playable_segments.is_empty() else null
 
 	if playable_segments.is_empty():
 		push_error("No playable parkour segments were found.")
@@ -84,16 +101,46 @@ func _rebuild_course() -> void:
 	segment_bag.clear()
 	last_segment_scene = null
 	next_segment_x = 0.0
-	next_surface_y = starting_ground_y
+	fixed_segment_y = 0.0
+	has_fixed_segment_y = false
 
 	if playable_segments.is_empty():
 		return
 
-	var first_scene := START_SEGMENT if playable_segments.has(START_SEGMENT) else _take_random_segment()
+	var first_scene := start_segment_scene if start_segment_scene != null and playable_segments.has(start_segment_scene) else _take_random_segment()
 	_spawn_segment(first_scene, true)
 	while active_segments.size() < max(initial_segment_count, 1):
 		_spawn_segment(_take_random_segment())
 	_fill_forward()
+
+
+func _get_configured_segment_scenes() -> Array[PackedScene]:
+	var requested_paths := _get_requested_segment_paths()
+	var configured_segments: Array[PackedScene] = []
+	for scene in SEGMENT_SCENES:
+		if requested_paths.is_empty() or requested_paths.has(scene.resource_path):
+			configured_segments.append(scene)
+
+	if configured_segments.is_empty():
+		push_warning("Parkour segment pool did not match any scene path. Falling back to all segments.")
+		for scene in SEGMENT_SCENES:
+			configured_segments.append(scene)
+
+	return configured_segments
+
+
+func _get_requested_segment_paths() -> Array[String]:
+	var requested_paths: Array[String] = []
+	var session := get_node_or_null("/root/game_session")
+	if session == null or not session.has_method("get_current_parkour_segment_paths"):
+		return requested_paths
+
+	var raw_paths = session.call("get_current_parkour_segment_paths")
+	if raw_paths is Array:
+		for path in raw_paths:
+			if path is String and not path.is_empty():
+				requested_paths.append(path)
+	return requested_paths
 
 
 func _fill_forward() -> void:
@@ -141,14 +188,19 @@ func _spawn_segment(scene: PackedScene, is_starting_segment: bool = false) -> vo
 	_connect_segment_body_entered_signals(segment)
 	var measurements: Dictionary = _measure_segment(segment)
 	var width: float = maxf(float(measurements["right_edge"]), minimum_segment_length)
-	var entry_y: float = float(measurements["entry_y"])
-	var exit_y: float = float(measurements["exit_y"])
-	var alignment_y: float = float(measurements["start_y"]) if is_starting_segment else entry_y
-	segment.position.y = next_surface_y - alignment_y
-	segment.set_meta("end_x", next_segment_x + width)
+	var respawn_y: float = float(measurements["start_y"])
+	if not has_fixed_segment_y:
+		fixed_segment_y = starting_ground_y - respawn_y
+		has_fixed_segment_y = true
+	segment.position.y = fixed_segment_y
+	var segment_start_x := to_local(segment.to_global(Vector2.ZERO)).x
+	var segment_end_x := to_local(segment.to_global(Vector2(width, 0.0))).x
+	var respawn_position := to_local(segment.to_global(Vector2(player_start_position.x, respawn_y - player_ground_offset_y)))
+	segment.set_meta("start_x", segment_start_x)
+	segment.set_meta("end_x", segment_end_x)
+	segment.set_meta("respawn_position", respawn_position)
 	active_segments.append(segment)
 	next_segment_x += width + segment_spacing
-	next_surface_y = segment.position.y + exit_y
 
 
 func _contains_tiles(node: Node) -> bool:
@@ -198,7 +250,7 @@ func _measure_segment(segment: Node2D) -> Dictionary:
 	var entry_y := INF
 	var exit_y := INF
 	var start_y := INF
-	var start_sample_x: float = player.position.x
+	var start_sample_x: float = player_start_position.x
 	for rect in cell_rects:
 		if rect.position.x <= left_edge + 1.0:
 			entry_y = minf(entry_y, rect.position.y)
@@ -216,6 +268,50 @@ func _measure_segment(segment: Node2D) -> Dictionary:
 		"exit_y": exit_y,
 		"start_y": start_y,
 	}
+
+
+func get_respawn_position_for_player(player_node: Node2D) -> Vector2:
+	var player_x := to_local(player_node.global_position).x
+	var segment := _find_segment_for_x(player_x)
+	if segment == null:
+		return to_global(player_start_position)
+
+	var respawn_position := player_start_position
+	var respawn_meta = segment.get_meta("respawn_position", player_start_position)
+	if respawn_meta is Vector2:
+		respawn_position = respawn_meta
+	return to_global(respawn_position)
+
+
+func sync_after_player_respawn() -> void:
+	last_player_x = player.position.x
+	_fill_forward()
+
+
+func _find_segment_for_x(player_x: float) -> Node2D:
+	var fallback_segment: Node2D = null
+	var fallback_start_x := -INF
+
+	for segment in active_segments:
+		if not is_instance_valid(segment):
+			continue
+
+		var start_x := float(segment.get_meta("start_x", 0.0))
+		var end_x := float(segment.get_meta("end_x", start_x))
+		if player_x >= start_x and player_x <= end_x:
+			return segment
+
+		if start_x <= player_x and start_x > fallback_start_x:
+			fallback_segment = segment
+			fallback_start_x = start_x
+
+	if fallback_segment != null:
+		return fallback_segment
+
+	if not active_segments.is_empty():
+		return active_segments[0]
+
+	return null
 
 
 func _collect_tile_layers(node: Node, layers: Array[TileMapLayer]) -> void:

@@ -3,20 +3,176 @@
 	"users": {
 		"admin": {
 			"focus_baseline": 50.0,
+			"level_completion": {
+
+			},
 			"level_success_attempts": {
+
+			},
+			"level_times": {
 
 			},
 			"password": "123456",
 			"total_play_time_seconds": 0.0,
 			"username": "admin"
 		},
-		"demo": {
+		"debug": {
 			"focus_baseline": 50.0,
+			"level_completion": {
+				"res://main_scene/bridge_build_city_1.tscn": true,
+				"res://main_scene/bridge_build_city_10.tscn": true,
+				"res://main_scene/bridge_build_city_2.tscn": true,
+				"res://main_scene/bridge_build_city_3.tscn": true,
+				"res://main_scene/bridge_build_city_4.tscn": true,
+				"res://main_scene/bridge_build_city_5.tscn": true,
+				"res://main_scene/bridge_build_city_6.tscn": true,
+				"res://main_scene/bridge_build_city_7.tscn": true,
+				"res://main_scene/bridge_build_city_8.tscn": true,
+				"res://main_scene/bridge_build_city_9.tscn": true,
+				"res://main_scene/bridgebuildgrass1.tscn": true,
+				"res://main_scene/bridgebuildgrass10.tscn": true,
+				"res://main_scene/bridgebuildgrass2.tscn": true,
+				"res://main_scene/bridgebuildgrass3.tscn": true,
+				"res://main_scene/bridgebuildgrass4.tscn": true,
+				"res://main_scene/bridgebuildgrass5.tscn": true,
+				"res://main_scene/bridgebuildgrass6.tscn": true,
+				"res://main_scene/bridgebuildgrass7.tscn": true,
+				"res://main_scene/bridgebuildgrass8.tscn": true,
+				"res://main_scene/bridgebuildgrass9.tscn": true,
+				"res://main_scene/bridgebuildsnow1.tscn": true,
+				"res://main_scene/bridgebuildsnow10.tscn": true,
+				"res://main_scene/bridgebuildsnow11.tscn": true,
+				"res://main_scene/bridgebuildsnow12.tscn": true,
+				"res://main_scene/bridgebuildsnow13.tscn": true,
+				"res://main_scene/bridgebuildsnow14.tscn": true,
+				"res://main_scene/bridgebuildsnow2.tscn": true,
+				"res://main_scene/bridgebuildsnow3.tscn": true,
+				"res://main_scene/bridgebuildsnow4.tscn": true,
+				"res://main_scene/bridgebuildsnow5.tscn": true,
+				"res://main_scene/bridgebuildsnow6.tscn": true,
+				"res://main_scene/bridgebuildsnow7.tscn": true,
+				"res://main_scene/bridgebuildsnow8.tscn": true,
+				"res://main_scene/bridgebuildsnow9.tscn": true,
+				"res://main_scene/bridgebuildvolcano1.tscn": true,
+				"res://main_scene/bridgebuildvolcano10.tscn": true,
+				"res://main_scene/bridgebuildvolcano11.tscn": true,
+				"res://main_scene/bridgebuildvolcano12.tscn": true,
+				"res://main_scene/bridgebuildvolcano13.tscn": true,
+				"res://main_scene/bridgebuildvolcano14.tscn": true,
+				"res://main_scene/bridgebuildvolcano15.tscn": true,
+				"res://main_scene/bridgebuildvolcano16.tscn": true,
+				"res://main_scene/bridgebuildvolcano17.tscn": true,
+				"res://main_scene/bridgebuildvolcano18.tscn": true,
+				"res://main_scene/bridgebuildvolcano19.tscn": true,
+				"res://main_scene/bridgebuildvolcano2.tscn": true,
+				"res://main_scene/bridgebuildvolcano20.tscn": true,
+				"res://main_scene/bridgebuildvolcano21.tscn": true,
+				"res://main_scene/bridgebuildvolcano3.tscn": true,
+				"res://main_scene/bridgebuildvolcano4.tscn": true,
+				"res://main_scene/bridgebuildvolcano5.tscn": true,
+				"res://main_scene/bridgebuildvolcano6.tscn": true,
+				"res://main_scene/bridgebuildvolcano7.tscn": true,
+				"res://main_scene/bridgebuildvolcano8.tscn": true,
+				"res://main_scene/bridgebuildvolcano9.tscn": true
+			},
 			"level_success_attempts": {
+				"res://main_scene/bridge_build_city_1.tscn": 1,
+				"res://main_scene/bridge_build_city_10.tscn": 1,
+				"res://main_scene/bridge_build_city_2.tscn": 1,
+				"res://main_scene/bridge_build_city_3.tscn": 1,
+				"res://main_scene/bridge_build_city_4.tscn": 1,
+				"res://main_scene/bridge_build_city_5.tscn": 1,
+				"res://main_scene/bridge_build_city_6.tscn": 1,
+				"res://main_scene/bridge_build_city_7.tscn": 1,
+				"res://main_scene/bridge_build_city_8.tscn": 1,
+				"res://main_scene/bridge_build_city_9.tscn": 1,
+				"res://main_scene/bridgebuildgrass1.tscn": 1,
+				"res://main_scene/bridgebuildgrass10.tscn": 1,
+				"res://main_scene/bridgebuildgrass2.tscn": 1,
+				"res://main_scene/bridgebuildgrass3.tscn": 1,
+				"res://main_scene/bridgebuildgrass4.tscn": 1,
+				"res://main_scene/bridgebuildgrass5.tscn": 1,
+				"res://main_scene/bridgebuildgrass6.tscn": 1,
+				"res://main_scene/bridgebuildgrass7.tscn": 1,
+				"res://main_scene/bridgebuildgrass8.tscn": 1,
+				"res://main_scene/bridgebuildgrass9.tscn": 1,
+				"res://main_scene/bridgebuildsnow1.tscn": 1,
+				"res://main_scene/bridgebuildsnow10.tscn": 1,
+				"res://main_scene/bridgebuildsnow11.tscn": 1,
+				"res://main_scene/bridgebuildsnow12.tscn": 1,
+				"res://main_scene/bridgebuildsnow13.tscn": 1,
+				"res://main_scene/bridgebuildsnow14.tscn": 1,
+				"res://main_scene/bridgebuildsnow2.tscn": 1,
+				"res://main_scene/bridgebuildsnow3.tscn": 1,
+				"res://main_scene/bridgebuildsnow4.tscn": 1,
+				"res://main_scene/bridgebuildsnow5.tscn": 1,
+				"res://main_scene/bridgebuildsnow6.tscn": 1,
+				"res://main_scene/bridgebuildsnow7.tscn": 1,
+				"res://main_scene/bridgebuildsnow8.tscn": 1,
+				"res://main_scene/bridgebuildsnow9.tscn": 1,
+				"res://main_scene/bridgebuildvolcano1.tscn": 1,
+				"res://main_scene/bridgebuildvolcano10.tscn": 1,
+				"res://main_scene/bridgebuildvolcano11.tscn": 1,
+				"res://main_scene/bridgebuildvolcano12.tscn": 1,
+				"res://main_scene/bridgebuildvolcano13.tscn": 1,
+				"res://main_scene/bridgebuildvolcano14.tscn": 1,
+				"res://main_scene/bridgebuildvolcano15.tscn": 1,
+				"res://main_scene/bridgebuildvolcano16.tscn": 1,
+				"res://main_scene/bridgebuildvolcano17.tscn": 1,
+				"res://main_scene/bridgebuildvolcano18.tscn": 1,
+				"res://main_scene/bridgebuildvolcano19.tscn": 1,
+				"res://main_scene/bridgebuildvolcano2.tscn": 1,
+				"res://main_scene/bridgebuildvolcano20.tscn": 1,
+				"res://main_scene/bridgebuildvolcano21.tscn": 1,
+				"res://main_scene/bridgebuildvolcano3.tscn": 1,
+				"res://main_scene/bridgebuildvolcano4.tscn": 1,
+				"res://main_scene/bridgebuildvolcano5.tscn": 1,
+				"res://main_scene/bridgebuildvolcano6.tscn": 1,
+				"res://main_scene/bridgebuildvolcano7.tscn": 1,
+				"res://main_scene/bridgebuildvolcano8.tscn": 1,
+				"res://main_scene/bridgebuildvolcano9.tscn": 1
+			},
+			"level_times": {
 
 			},
-			"password": "123456",
+			"password": "debug",
 			"total_play_time_seconds": 0.0,
+			"username": "debug"
+		},
+		"demo": {
+			"focus_baseline": 50.0,
+			"level_completion": {
+				"res://main_scene/bridgebuildgrass1.tscn": true,
+				"res://main_scene/bridgebuildgrass2.tscn": true,
+				"res://main_scene/bridgebuildgrass3.tscn": true,
+				"res://main_scene/bridgebuildgrass4.tscn": true
+			},
+			"level_success_attempts": {
+				"res://main_scene/bridgebuildgrass1.tscn": 5.0,
+				"res://main_scene/bridgebuildgrass2.tscn": 1.0,
+				"res://main_scene/bridgebuildgrass3.tscn": 9.0,
+				"res://main_scene/bridgebuildgrass4.tscn": 7.0
+			},
+			"level_times": {
+				"res://main_scene/bridgebuildgrass1.tscn": {
+					"best_seconds": 61.513,
+					"last_seconds": 61.513
+				},
+				"res://main_scene/bridgebuildgrass2.tscn": {
+					"best_seconds": 10.056,
+					"last_seconds": 10.056
+				},
+				"res://main_scene/bridgebuildgrass3.tscn": {
+					"best_seconds": 36.435,
+					"last_seconds": 36.435
+				},
+				"res://main_scene/bridgebuildgrass4.tscn": {
+					"best_seconds": 46.307,
+					"last_seconds": 46.307
+				}
+			},
+			"password": "123456",
+			"total_play_time_seconds": 318.824,
 			"username": "demo"
 		}
 	}

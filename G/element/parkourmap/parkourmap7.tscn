@@ -4,10 +4,10 @@
 [ext_resource type="PackedScene" uid="uid://c15xq8r0f4den" path="res://element/gizmo/spring_pad.tscn" id="2_851nv"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_1w2g6"]
-size = Vector2(164.5, 189.5)
+size = Vector2(289, 740.5)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w5pcm"]
-size = Vector2(243, 127)
+size = Vector2(243, 733)
 
 [node name="Parkourmap4" type="Node2D"]
 
@@ -27,12 +27,12 @@ tile_set = ExtResource("1_hkime")
 position = Vector2(508, 69)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="killzone"]
-position = Vector2(67.75, 802.25)
+position = Vector2(44.5, 1077.75)
 shape = SubResource("RectangleShape2D_1w2g6")
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="killzone"]
-position = Vector2(546.5, 720.5)
+position = Vector2(549, 1023)
 shape = SubResource("RectangleShape2D_w5pcm")
 
 [node name="spring_pad" parent="." instance=ExtResource("2_851nv")]
-position = Vector2(845, 714)
+position = Vector2(902, 721)
