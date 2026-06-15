@@ -17,14 +17,11 @@ func _on_player_enter(body: Node2D):
 	if not has_triggered and body.is_in_group("Player"):
 		
 		has_triggered = true
-		# 先移动到终点 → 完成后自动返回
 		var tween = create_tween()
-		# 1. 先移动到终点
 		emit_signal("player_touched",body)
 		tween.tween_property(self, "position", end_position, move_duration)
 		tween.tween_callback(func(): emit_signal("platform_arrived", body))
 		tween.tween_interval(move_duration)
 		tween.tween_property(self, "position", start_position, move_duration)
 		
-		# 可选：动画全部结束后，重置触发锁，允许再次触发
 		has_triggered = false

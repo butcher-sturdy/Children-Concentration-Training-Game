@@ -4,7 +4,7 @@ extends Node
 @export var read_interval: float = 0.2
 @export var mouse_wheel_step: float = 5.0
 
-const FILE_PATH: String = "C:/Users/ASUS/Desktop/concentration.txt"
+const FILE_PATH: String = "C:/Users/ASUS/Desktop/attention.txt"
 
 var read_timer: float = 0.0
 

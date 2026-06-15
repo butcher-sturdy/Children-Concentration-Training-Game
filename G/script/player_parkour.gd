@@ -3,6 +3,7 @@ extends CharacterBody2D
 const PARKOUR_RESULT_SCENE_PATH := "res://main_scene/parkour_result.tscn"
 const COUNTDOWN_PANEL_TEXTURE := preload("res://asset/4/parkour_countdown_panel.png")
 const COUNTDOWN_GO_TEXT := "\u5f00\u59cb"
+const ATTENTION_EMOTION_HUD_SCRIPT := preload("res://script/attention_emotion_hud.gd")
 
 @export var move_speed: float = 300.0
 @export var jump_force: float = -800.0
@@ -11,7 +12,7 @@ const COUNTDOWN_GO_TEXT := "\u5f00\u59cb"
 @export_range(-1, 1, 2) var run_direction: int = 1
 
 @export var invincible_threshold: float = 50.0
-@export var fly_threshold: float = 75.0
+@export var fly_threshold: float = 55.0
 @export var fly_speed_multiplier: float = 1.5
 @export var use_focus_threshold_effects: bool = true
 
@@ -23,7 +24,7 @@ const COUNTDOWN_GO_TEXT := "\u5f00\u59cb"
 @export var stuck_reset_seconds: float = 7.0
 @export var stuck_x_epsilon: float = 2.0
 @export var use_focus_guard_effects: bool = false
-@export var focus_guard_threshold: float = 70.0
+@export var focus_guard_threshold: float = 45.0
 @export var focus_guard_delay: float = 2.0
 @export var serene_fall_guard_duration: float = 5.0
 
@@ -70,6 +71,7 @@ func _ready() -> void:
 	_create_respawn_countdown_ui()
 	_reset_stuck_monitor()
 	_begin_parkour_session()
+	_install_attention_emotion_hud()
 
 	if animated_sprite:
 		animated_sprite.animation = "walk" if is_auto_run else "idle"
@@ -500,3 +502,14 @@ func _begin_parkour_session() -> void:
 	var session := get_node_or_null("/root/game_session")
 	if session != null and session.has_method("begin_parkour"):
 		session.call("begin_parkour")
+
+
+func _install_attention_emotion_hud() -> void:
+	if get_node_or_null("AttentionEmotionHud") != null:
+		return
+
+	var hud := ATTENTION_EMOTION_HUD_SCRIPT.new() as CanvasLayer
+	if hud == null:
+		return
+	hud.name = "AttentionEmotionHud"
+	add_child(hud)

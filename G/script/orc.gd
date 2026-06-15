@@ -3,7 +3,7 @@ extends AnimatableBody2D
 signal player_collide(body:CharacterBody2D)
 @export var move_speed: float = 120.0
 @export var pause_time: float = 1.0
-@export var move_range: float = 200.0  # 左右各走多远
+@export var move_range: float = 200.0
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 
@@ -32,15 +32,12 @@ func _physics_process(delta):
 			flip_sprite()
 		return
 
-	# 正常移动
 	position.x += direction * move_speed * delta
 
-	# 到达右边界
 	if direction == 1 and position.x >= right_limit:
 		position.x = right_limit
 		pause()
 
-	# 到达左边界
 	if direction == -1 and position.x <= left_limit:
 		position.x = left_limit
 		pause()
@@ -54,5 +51,4 @@ func player_collided(body:Node2D)->void:
 	emit_signal("player_collide",body)
 	
 func flip_sprite():
-	# 向右不翻转，向左翻转
 	sprite.flip_h = direction == -1

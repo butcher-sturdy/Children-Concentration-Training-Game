@@ -7,7 +7,6 @@ const ANSWER_HINT_SCRIPT_PATH: String = "res://script/bridge_build_answer_hint.g
 const FOCUS_SOLID_META: String = "focus_feedback_solid"
 const FOCUS_BASE_MODULATE_META: String = "focus_feedback_base_modulate"
 
-# 导出变量
 @export var platform_scene: PackedScene
 @export var platform_size: Vector2 = Vector2(100, 35)
 @export var preview_alpha: float = 1.0
@@ -15,14 +14,14 @@ const FOCUS_BASE_MODULATE_META: String = "focus_feedback_base_modulate"
 @export var collision_mask: int = 1
 @export var focus_outline_threshold: float = 40.0
 @export var focus_half_threshold: float = 60.0
-@export var focus_solid_threshold: float = 75.0
+@export var focus_solid_threshold: float = 85.0
 @export_range(0.0, 1.0, 0.01) var focus_outline_alpha: float = 0.18
 @export_range(0.0, 1.0, 0.01) var focus_half_alpha_start: float = 0.35
 @export_range(0.0, 1.0, 0.01) var focus_half_alpha_end: float = 0.55
 @export_range(0.0, 1.0, 0.01) var focus_forming_alpha_start: float = 0.65
 @export_range(0.0, 1.0, 0.01) var focus_forming_alpha_end: float = 0.95
 
-# 为 Vector2.ZERO 时，自动使用统一的短距离作为速度标尺。
+# Vector2.ZERO 时按平台尺寸计算步长。
 @export var grid_step: Vector2 = Vector2.ZERO
 @export var grid_origin: Vector2 = Vector2(385, 430)
 @export var initial_cursor_position: Vector2 = Vector2(385, 430)
@@ -31,7 +30,6 @@ const FOCUS_BASE_MODULATE_META: String = "focus_feedback_base_modulate"
 @export var smooth_keyboard_cursor_movement: bool = true
 @export var use_mouse_position_for_mouse_actions: bool = true
 
-# 最大生成数量
 @export var max_platform_count: int = 10
 var current_platform_count: int = 0
 
@@ -63,8 +61,7 @@ func _ready() -> void:
 	queue_redraw()
 
 func install_answer_hint() -> void:
-	# 自动挂载答案提示脚本。以后新建 bridgebuild 关卡时，只要使用本放置器，
-	# 就会自动拥有答案记录按钮和 P 键提示。
+	# 给搭桥关卡挂载答案提示。
 	if get_node_or_null("BridgeBuildAnswerHint") != null:
 		return
 	if get_tree().current_scene != null and get_tree().current_scene.find_child("BridgeBuildAnswerHint", true, false) != null:
@@ -100,8 +97,19 @@ func _input(event: InputEvent) -> void:
 				start_held_move(Vector2.DOWN)
 				get_viewport().set_input_as_handled()
 
+func _unhandled_input(event: InputEvent) -> void:
+	var key_event: InputEventKey = event as InputEventKey
+	if key_event == null or not key_event.pressed or key_event.echo:
+		return
+
+	match get_keycode(key_event):
+		KEY_ENTER, KEY_KP_ENTER:
+			try_spawn_platform(get_confirm_action_position())
+			get_viewport().set_input_as_handled()
+
 func get_keycode(key_event: InputEventKey) -> int:
-	# 有些键盘布局下 keycode 可能为 0，physical_keycode 更稳定。
+	if key_event.keycode == KEY_NONE:
+		return key_event.physical_keycode
 	if key_event.keycode != KEY_NONE:
 		return key_event.keycode
 	return key_event.physical_keycode
@@ -167,12 +175,17 @@ func is_held_move_key_pressed() -> bool:
 	return false
 
 func get_mouse_action_position() -> Vector2:
-	# 鼠标输入动作默认使用真实鼠标位置；如需恢复旧的键盘光标逻辑，
-	# 可在检查器里关闭 use_mouse_position_for_mouse_actions。
+	# 鼠标操作使用实际鼠标位置。
 	if use_mouse_position_for_mouse_actions:
 		cursor_position = get_cursor_input_position(get_global_mouse_position())
 		displayed_cursor_position = cursor_position
 		keyboard_cursor_active = false
+	return cursor_position
+
+func get_confirm_action_position() -> Vector2:
+	if use_mouse_position_for_mouse_actions and not keyboard_cursor_active:
+		cursor_position = get_cursor_input_position(get_global_mouse_position())
+		displayed_cursor_position = cursor_position
 	return cursor_position
 
 func update_cursor_control_mode() -> void:
@@ -185,7 +198,7 @@ func update_cursor_control_mode() -> void:
 	last_mouse_position = mouse_position
 
 func is_mouse_over_gui() -> bool:
-	# 点击 UI 按钮时不放置 / 删除平台，避免按“记录答案”时误记录一个平台。
+	# 避免点击按钮时放置或删除平台。
 	return get_viewport().gui_get_hovered_control() != null
 
 func try_spawn_platform(spawn_pos: Vector2) -> void:
@@ -480,6 +493,8 @@ func get_current_focus_level() -> float:
 
 func get_focus_platform_alpha(focus_level: float) -> float:
 	var focus := clampf(focus_level, 0.0, 100.0)
+	if focus >= focus_solid_threshold:
+		return 1.0
 	if focus < focus_outline_threshold:
 		return focus_outline_alpha
 	if focus < focus_half_threshold:

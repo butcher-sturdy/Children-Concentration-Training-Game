@@ -1,7 +1,7 @@
 extends Control
 
 @export var player_path: NodePath = NodePath("../../player")
-@export var activation_threshold: float = 70.0
+@export var activation_threshold: float = 50.0
 @export var charge_duration: float = 15.0
 @export var boost_duration: float = 7.0
 @export var boost_speed_multiplier: float = 2.0

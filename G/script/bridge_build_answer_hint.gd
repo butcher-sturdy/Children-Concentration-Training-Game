@@ -5,10 +5,10 @@ class_name BridgeBuildAnswerHint
 const ANSWER_SAVE_PATH: String = "res://script/bridge_build_answers.json"
 const STORAGE_PLATFORM_META: String = "bridge_build_answer_storage_platform"
 
-# Optional per-scene override. Leave empty to use bridge_build_answers.json.
+# 单关卡答案覆盖；为空时读取文件。
 @export var override_answer_positions: Array[Vector2] = []
 
-# Hint input and trigger condition.
+# 提示触发。
 @export var hint_action: String = "p"
 @export var use_focus_condition: bool = false
 @export var focus_trigger_threshold: float = 75.0
@@ -21,7 +21,7 @@ const STORAGE_PLATFORM_META: String = "bridge_build_answer_storage_platform"
 @export var emotion_smoothing_seconds: float = 1.2
 @export var impatient_required_seconds: float = 2.5
 
-# Hint display settings.
+# 提示显示。
 @export var hint_alpha: float = 0.42
 @export var flash_low_alpha: float = 0.12
 @export var flash_high_alpha: float = 0.82
@@ -29,7 +29,7 @@ const STORAGE_PLATFORM_META: String = "bridge_build_answer_storage_platform"
 @export var flash_half_interval: float = 0.12
 @export var hint_z_index: int = 20
 
-# Runtime answer-recording button settings.
+# 录制按钮。
 @export var storage_button_text: String = "Record Answer"
 @export var saving_button_text: String = "Save Answer"
 @export var storage_button_offset: Vector2 = Vector2(-220, 40)
@@ -246,7 +246,7 @@ func _enter_storage_mode() -> void:
 	editing_positions.clear()
 	editing_platforms.clear()
 
-	# Recreate saved answer platforms for editing without recording them again.
+	# 载入已保存答案用于编辑。
 	ignore_spawn_signal = true
 	for saved_position in answer_positions:
 		var platform := platform_spawner.call("spawn_platform", saved_position) as Node2D

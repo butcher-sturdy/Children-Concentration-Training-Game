@@ -112,7 +112,7 @@ func save_users() -> bool:
 	var json_text: String = JSON.stringify(data, "\t")
 	var saved_runtime_file: bool = _write_text(SAVE_FILE_PATH, json_text, true)
 
-	# Keep the project data file visible while developing in the editor.
+	# 同步到项目目录，便于编辑器查看。
 	_write_text(PROJECT_DATA_FILE_PATH, json_text, false)
 	return saved_runtime_file
 
@@ -225,7 +225,7 @@ func is_level_completed(level_id: String, username: String = "") -> bool:
 	if bool(completion_data.get(clean_level_id, false)):
 		return true
 
-	# Older saves only had success attempts; treat those as completed too.
+	# 兼容旧存档。
 	var attempts_data: Dictionary = _dictionary_from(user.get("level_success_attempts", {}))
 	return attempts_data.has(clean_level_id)
 

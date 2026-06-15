@@ -1,5 +1,7 @@
 extends CharacterBody2D
 
+const ATTENTION_EMOTION_HUD_SCRIPT := preload("res://script/attention_emotion_hud.gd")
+
 @export var move_speed: float = 300.0
 @export var jump_force: float = -600.0
 @export var gravity: float = 1800.0
@@ -16,6 +18,7 @@ func _ready() -> void:
 	run_direction = 1 if run_direction >= 0 else -1
 	start_position = global_position
 	_start_bridge_session_if_needed()
+	_install_attention_emotion_hud()
 
 	if animated_sprite and animated_sprite.sprite_frames:
 		animated_sprite.animation = "walk" if is_auto_run else "idle"
@@ -124,3 +127,14 @@ func _record_bridge_failure() -> void:
 	var session := get_node_or_null("/root/game_session")
 	if session != null and session.has_method("record_bridge_failure"):
 		session.call("record_bridge_failure")
+
+
+func _install_attention_emotion_hud() -> void:
+	if get_node_or_null("AttentionEmotionHud") != null:
+		return
+
+	var hud := ATTENTION_EMOTION_HUD_SCRIPT.new() as CanvasLayer
+	if hud == null:
+		return
+	hud.name = "AttentionEmotionHud"
+	add_child(hud)
