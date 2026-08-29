@@ -114,7 +114,7 @@ func update_focus_states() -> void:
 	is_invincible = is_energy_boost_active() or focus_guard_active
 	is_flying = is_energy_boost_active()
 
-	if use_focus_threshold_effects:
+	if use_focus_threshold_effects and _current_group_uses_eeg():
 		is_invincible = is_invincible or concentration.focus_level >= invincible_threshold
 		is_flying = is_flying or concentration.focus_level >= fly_threshold
 
@@ -163,10 +163,13 @@ func _update_energy_boost(delta: float) -> void:
 	if was_active and not is_energy_boost_active():
 		serene_fall_guard_remaining = 0.0
 		serene_state_changed.emit(false)
+		var session := get_node_or_null("/root/game_session")
+		if session != null and session.has_method("send_game_event"):
+			session.call("send_game_event", "ENERGY_BOOST_END")
 
 
 func _update_focus_guard(delta: float) -> void:
-	if not use_focus_guard_effects:
+	if not use_focus_guard_effects or not _current_group_uses_eeg():
 		_set_focus_guard_active(false)
 		return
 
@@ -513,3 +516,10 @@ func _install_attention_emotion_hud() -> void:
 		return
 	hud.name = "AttentionEmotionHud"
 	add_child(hud)
+
+
+func _current_group_uses_eeg() -> bool:
+	var session := get_node_or_null("/root/game_session")
+	if session != null and session.has_method("current_group_uses_eeg"):
+		return bool(session.call("current_group_uses_eeg"))
+	return false

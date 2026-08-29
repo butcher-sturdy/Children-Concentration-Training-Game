@@ -169,6 +169,20 @@ placeholder_text = "请输入密码"
 secret = true
 clear_button_enabled = true
 
+[node name="GroupLabel" type="Label" parent="CenterContainer/LoginPanel/Form"]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.24, 0.14, 0.08, 1)
+theme_override_font_sizes/font_size = 22
+text = "实验组别（可在每次登录时修改）"
+
+[node name="GroupSelect" type="OptionButton" parent="CenterContainer/LoginPanel/Form"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 58)
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_input")
+theme_override_styles/focus = SubResource("StyleBoxFlat_input")
+
 [node name="ButtonRow" type="HBoxContainer" parent="CenterContainer/LoginPanel/Form"]
 layout_mode = 2
 theme_override_constants/separation = 18

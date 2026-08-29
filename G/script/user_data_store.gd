@@ -4,6 +4,13 @@ class_name UserDataStore
 const PROJECT_DATA_FILE_PATH: String = "res://data/users.json"
 const SAVE_FILE_PATH: String = "user://users.json"
 const DEFAULT_FOCUS_BASELINE: float = 50.0
+const DEFAULT_EXPERIMENTAL_GROUP_CODE: String = ""
+const EXPERIMENTAL_GROUP_CODES: Array[String] = [
+	"blank_control",
+	"eeg",
+	"gesture",
+	"gesture_eeg",
+]
 const DEBUG_USERNAME := "debug"
 const DEBUG_PASSWORD := "debug"
 
@@ -106,7 +113,7 @@ func load_users() -> bool:
 
 func save_users() -> bool:
 	var data: Dictionary = {
-		"schema_version": 1,
+		"schema_version": 2,
 		"users": users
 	}
 	var json_text: String = JSON.stringify(data, "\t")
@@ -147,7 +154,12 @@ func set_current_user(username: String) -> bool:
 	return true
 
 
-func create_user(username: String, password: String, focus_baseline: float = DEFAULT_FOCUS_BASELINE) -> Dictionary:
+func create_user(
+	username: String,
+	password: String,
+	focus_baseline: float = DEFAULT_FOCUS_BASELINE,
+	experimental_group_code: String = DEFAULT_EXPERIMENTAL_GROUP_CODE
+) -> Dictionary:
 	var clean_username: String = username.strip_edges()
 	if clean_username.is_empty():
 		return {"ok": false, "message": "\u7528\u6237\u540d\u4e0d\u80fd\u4e3a\u7a7a"}
@@ -155,8 +167,15 @@ func create_user(username: String, password: String, focus_baseline: float = DEF
 		return {"ok": false, "message": "\u5bc6\u7801\u4e0d\u80fd\u4e3a\u7a7a"}
 	if users.has(clean_username):
 		return {"ok": false, "message": "\u7528\u6237\u5df2\u5b58\u5728"}
+	if not is_valid_experimental_group(experimental_group_code):
+		return {"ok": false, "message": "\u8bf7\u9009\u62e9\u6709\u6548\u7684\u5b9e\u9a8c\u7ec4\u522b"}
 
-	users[clean_username] = _create_empty_user(clean_username, password, focus_baseline)
+	users[clean_username] = _create_empty_user(
+		clean_username,
+		password,
+		focus_baseline,
+		experimental_group_code
+	)
 	save_users()
 	current_username = clean_username
 	return {"ok": true, "message": "\u7528\u6237\u5df2\u521b\u5efa"}
@@ -169,6 +188,35 @@ func get_user(username: String = "") -> Dictionary:
 
 	var user: Dictionary = users[target_username] as Dictionary
 	return user.duplicate(true)
+
+
+func set_experimental_group(group_code: String, username: String = "") -> bool:
+	var target_username: String = _resolve_username(username)
+	if target_username.is_empty() or not users.has(target_username):
+		return false
+	if not is_valid_experimental_group(group_code):
+		return false
+
+	var user: Dictionary = users[target_username] as Dictionary
+	user["experimental_group_code"] = group_code
+	users[target_username] = user
+	return save_users()
+
+
+func get_experimental_group(username: String = "") -> String:
+	var target_username: String = _resolve_username(username)
+	if target_username.is_empty() or not users.has(target_username):
+		return DEFAULT_EXPERIMENTAL_GROUP_CODE
+
+	var user: Dictionary = users[target_username] as Dictionary
+	var group_code := str(user.get("experimental_group_code", DEFAULT_EXPERIMENTAL_GROUP_CODE))
+	if is_valid_experimental_group(group_code):
+		return group_code
+	return DEFAULT_EXPERIMENTAL_GROUP_CODE
+
+
+func is_valid_experimental_group(group_code: String) -> bool:
+	return EXPERIMENTAL_GROUP_CODES.has(group_code)
 
 
 func set_focus_baseline(value: float, username: String = "") -> bool:
@@ -293,6 +341,8 @@ func _normalize_loaded_users() -> void:
 			user["password"] = ""
 		if not user.has("focus_baseline"):
 			user["focus_baseline"] = DEFAULT_FOCUS_BASELINE
+		var group_code := str(user.get("experimental_group_code", DEFAULT_EXPERIMENTAL_GROUP_CODE))
+		user["experimental_group_code"] = group_code if is_valid_experimental_group(group_code) else DEFAULT_EXPERIMENTAL_GROUP_CODE
 		if not user.has("level_success_attempts") or typeof(user["level_success_attempts"]) != TYPE_DICTIONARY:
 			user["level_success_attempts"] = {}
 		if not user.has("level_completion") or typeof(user["level_completion"]) != TYPE_DICTIONARY:
@@ -312,6 +362,8 @@ func _ensure_debug_user() -> void:
 	user["username"] = DEBUG_USERNAME
 	user["password"] = DEBUG_PASSWORD
 	user["focus_baseline"] = float(user.get("focus_baseline", DEFAULT_FOCUS_BASELINE))
+	var debug_group_code := str(user.get("experimental_group_code", DEFAULT_EXPERIMENTAL_GROUP_CODE))
+	user["experimental_group_code"] = debug_group_code if is_valid_experimental_group(debug_group_code) else DEFAULT_EXPERIMENTAL_GROUP_CODE
 	user["total_play_time_seconds"] = float(user.get("total_play_time_seconds", 0.0))
 
 	var level_completion: Dictionary = _dictionary_from(user.get("level_completion", {}))
@@ -327,11 +379,17 @@ func _ensure_debug_user() -> void:
 	users[DEBUG_USERNAME] = user
 
 
-func _create_empty_user(username: String, password: String, focus_baseline: float) -> Dictionary:
+func _create_empty_user(
+	username: String,
+	password: String,
+	focus_baseline: float,
+	experimental_group_code: String
+) -> Dictionary:
 	return {
 		"username": username,
 		"password": password,
 		"focus_baseline": clampf(focus_baseline, 0.0, 100.0),
+		"experimental_group_code": experimental_group_code,
 		"level_success_attempts": {},
 		"level_completion": {},
 		"level_times": {},

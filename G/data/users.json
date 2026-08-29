@@ -1,22 +1,18 @@
 {
-	"schema_version": 1,
+	"schema_version": 2,
 	"users": {
 		"admin": {
+			"experimental_group_code": "",
 			"focus_baseline": 50.0,
-			"level_completion": {
-
-			},
-			"level_success_attempts": {
-
-			},
-			"level_times": {
-
-			},
+			"level_completion": {},
+			"level_success_attempts": {},
+			"level_times": {},
 			"password": "123456",
 			"total_play_time_seconds": 0.0,
 			"username": "admin"
 		},
 		"debug": {
+			"experimental_group_code": "eeg",
 			"focus_baseline": 50.0,
 			"level_completion": {
 				"res://main_scene/bridge_build_city_1.tscn": true,
@@ -86,7 +82,7 @@
 				"res://main_scene/bridge_build_city_7.tscn": 1.0,
 				"res://main_scene/bridge_build_city_8.tscn": 1.0,
 				"res://main_scene/bridge_build_city_9.tscn": 1.0,
-				"res://main_scene/bridgebuildgrass1.tscn": 2.0,
+				"res://main_scene/bridgebuildgrass1.tscn": 1.0,
 				"res://main_scene/bridgebuildgrass10.tscn": 1.0,
 				"res://main_scene/bridgebuildgrass2.tscn": 1.0,
 				"res://main_scene/bridgebuildgrass3.tscn": 1.0,
@@ -135,14 +131,15 @@
 			"level_times": {
 				"res://main_scene/bridgebuildgrass1.tscn": {
 					"best_seconds": 8.193,
-					"last_seconds": 13.072
+					"last_seconds": 10.516
 				}
 			},
 			"password": "debug",
-			"total_play_time_seconds": 724.244,
+			"total_play_time_seconds": 819.65,
 			"username": "debug"
 		},
 		"demo": {
+			"experimental_group_code": "",
 			"focus_baseline": 50.0,
 			"level_completion": {
 				"res://main_scene/bridgebuildgrass1.tscn": true,

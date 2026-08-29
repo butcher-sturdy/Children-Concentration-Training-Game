@@ -492,6 +492,8 @@ func get_current_focus_level() -> float:
 	return clampf(float(focus_value), 0.0, 100.0)
 
 func get_focus_platform_alpha(focus_level: float) -> float:
+	if not current_group_uses_eeg():
+		return 1.0
 	var focus := clampf(focus_level, 0.0, 100.0)
 	if focus >= focus_solid_threshold:
 		return 1.0
@@ -524,7 +526,7 @@ func apply_platform_focus_state(platform: Node2D, focus_level: float) -> void:
 		platform.set_meta(FOCUS_BASE_MODULATE_META, platform.modulate)
 
 	var was_locked_solid := platform.has_meta(FOCUS_SOLID_META) and bool(platform.get_meta(FOCUS_SOLID_META))
-	var is_locked_solid := was_locked_solid or focus_level >= focus_solid_threshold
+	var is_locked_solid := not current_group_uses_eeg() or was_locked_solid or focus_level >= focus_solid_threshold
 
 	var base_modulate: Color = platform.modulate
 	var base_modulate_value: Variant = platform.get_meta(FOCUS_BASE_MODULATE_META)
@@ -554,6 +556,12 @@ func set_platform_collision_enabled(node: Node, enabled: bool) -> void:
 
 	for child in node.get_children():
 		set_platform_collision_enabled(child, enabled)
+
+func current_group_uses_eeg() -> bool:
+	var session := get_node_or_null("/root/game_session")
+	if session != null and session.has_method("current_group_uses_eeg"):
+		return bool(session.call("current_group_uses_eeg"))
+	return false
 
 func _draw() -> void:
 	if preview_texture == null or preview_source_scene != platform_scene:

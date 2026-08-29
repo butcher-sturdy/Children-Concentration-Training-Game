@@ -3,6 +3,7 @@ extends Control
 @export var player_path: NodePath = NodePath("../../player")
 @export var activation_threshold: float = 50.0
 @export var charge_duration: float = 15.0
+@export_range(0.0, 1.0, 0.05) var non_eeg_charge_rate: float = 0.5
 @export var boost_duration: float = 7.0
 @export var boost_speed_multiplier: float = 2.0
 @export var bar_size: Vector2 = Vector2(260.0, 44.0)
@@ -24,6 +25,7 @@ func _ready() -> void:
 
 func _process(delta: float) -> void:
 	var focus_level := _get_focus_level()
+	var uses_eeg := _current_group_uses_eeg()
 	if active_time_remaining > 0.0:
 		if not _is_player_serene_active():
 			active_time_remaining = 0.0
@@ -31,9 +33,14 @@ func _process(delta: float) -> void:
 			return
 		active_time_remaining = maxf(active_time_remaining - delta, 0.0)
 		flash_phase += delta * _get_flash_frequency(100.0) * TAU
-	elif focus_level >= activation_threshold:
+	elif uses_eeg and focus_level >= activation_threshold:
 		charge_time = minf(charge_time + delta, charge_duration)
 		flash_phase += delta * _get_flash_frequency(focus_level) * TAU
+		if charge_time >= charge_duration:
+			_activate_boost()
+	elif not uses_eeg:
+		charge_time = minf(charge_time + delta * non_eeg_charge_rate, charge_duration)
+		flash_phase += delta * _get_flash_frequency(activation_threshold) * TAU
 		if charge_time >= charge_duration:
 			_activate_boost()
 	else:
@@ -48,8 +55,9 @@ func _draw() -> void:
 		draw_size = bar_size
 
 	var focus_level := _get_focus_level()
+	var uses_eeg := _current_group_uses_eeg()
 	var active := active_time_remaining > 0.0
-	var charging := focus_level >= activation_threshold and not active
+	var charging := (not uses_eeg or focus_level >= activation_threshold) and not active
 	var pulse := (sin(flash_phase) + 1.0) * 0.5
 	var focus_ratio := clampf((focus_level - activation_threshold) / maxf(100.0 - activation_threshold, 1.0), 0.0, 1.0)
 	var progress := _get_progress()
@@ -92,6 +100,12 @@ func _activate_boost() -> void:
 		player = get_node_or_null(player_path)
 	if player != null and player.has_method("activate_energy_boost"):
 		player.call("activate_energy_boost", boost_duration, boost_speed_multiplier)
+		var session := get_node_or_null("/root/game_session")
+		if session != null and session.has_method("send_game_event"):
+			session.call("send_game_event", "ENERGY_BOOST_START", {
+				"value": boost_duration,
+				"charge_mode": "attention" if _current_group_uses_eeg() else "paced_control",
+			})
 	else:
 		push_warning("Parkour energy bar could not activate player energy boost.")
 
@@ -124,3 +138,10 @@ func _is_player_serene_active() -> bool:
 	if player != null and player.has_method("is_energy_boost_active"):
 		return bool(player.call("is_energy_boost_active"))
 	return active_time_remaining > 0.0
+
+
+func _current_group_uses_eeg() -> bool:
+	var session := get_node_or_null("/root/game_session")
+	if session != null and session.has_method("current_group_uses_eeg"):
+		return bool(session.call("current_group_uses_eeg"))
+	return false

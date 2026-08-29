@@ -5,6 +5,7 @@ const UserDataStoreScript = preload("res://script/user_data_store.gd")
 
 @onready var username_input: LineEdit = %UsernameInput
 @onready var password_input: LineEdit = %PasswordInput
+@onready var group_select: OptionButton = %GroupSelect
 @onready var login_button: Button = %LoginButton
 @onready var create_button: Button = %CreateButton
 @onready var message_label: Label = %MessageLabel
@@ -29,7 +30,10 @@ func _ready() -> void:
 		username_input.text_submitted.connect(_on_text_submitted)
 	if not password_input.text_submitted.is_connected(_on_text_submitted):
 		password_input.text_submitted.connect(_on_text_submitted)
+	if not username_input.text_changed.is_connected(_on_username_changed):
+		username_input.text_changed.connect(_on_username_changed)
 
+	_populate_group_select()
 	username_input.grab_focus()
 	_set_message("Demo: demo / 123456    Debug: debug / debug (all levels unlocked)", false)
 	_show_empty_user_info()
@@ -39,19 +43,24 @@ func _on_text_submitted(_text: String) -> void:
 	_on_login_pressed()
 
 
+func _on_username_changed(_text: String) -> void:
+	_select_saved_group_for_username(username_input.text.strip_edges())
+
+
 func _on_login_pressed() -> void:
 	var username: String = username_input.text.strip_edges()
 	var password: String = password_input.text
+	var group_code := _get_selected_group_code()
 
-	if username.is_empty() or password.is_empty():
-		_set_message("Username and password cannot be empty.", false)
+	if username.is_empty() or password.is_empty() or group_code.is_empty():
+		_set_message("\u7528\u6237\u540d\u3001\u5bc6\u7801\u548c\u5b9e\u9a8c\u7ec4\u522b\u4e0d\u80fd\u4e3a\u7a7a\u3002", false)
 		return
 
 	var result: Dictionary = {}
 	if session != null and session.has_method("login"):
-		result = session.call("login", username, password)
+		result = session.call("login", username, password, group_code)
 	else:
-		result = _login_without_session(username, password)
+		result = _login_without_session(username, password, group_code)
 
 	if not bool(result.get("ok", false)):
 		_set_message(str(result.get("message", "Login failed.")), false)
@@ -67,11 +76,20 @@ func _on_login_pressed() -> void:
 func _on_create_pressed() -> void:
 	var username: String = username_input.text.strip_edges()
 	var password: String = password_input.text
+	var group_code := _get_selected_group_code()
+	if group_code.is_empty():
+		_set_message("\u8bf7\u9009\u62e9\u5b9e\u9a8c\u7ec4\u522b\u3002", false)
+		return
 	var result: Dictionary = {}
 	if session != null and session.has_method("create_user"):
-		result = session.call("create_user", username, password)
+		result = session.call("create_user", username, password, group_code)
 	else:
-		result = user_data_store.create_user(username, password)
+		result = user_data_store.create_user(
+			username,
+			password,
+			UserDataStoreScript.DEFAULT_FOCUS_BASELINE,
+			group_code
+		)
 
 	if bool(result.get("ok", false)):
 		_set_message("%s: %s" % [str(result.get("message", "User created.")), username], true)
@@ -114,8 +132,10 @@ func _show_user_info(username: String) -> void:
 		for level_id in (attempts_data as Dictionary).keys():
 			completed_levels[str(level_id)] = true
 
-	user_info_label.text = "Current user: %s\nFocus baseline: %.1f\nCompleted: %d levels\nTotal play time: %s" % [
+	var group_code := str(user.get("experimental_group_code", ""))
+	user_info_label.text = "Current user: %s\nExperimental group: %s\nFocus baseline: %.1f\nCompleted: %d levels\nTotal play time: %s" % [
 		str(user.get("username", username)),
+		_get_group_label(group_code),
 		float(user.get("focus_baseline", 0.0)),
 		completed_levels.size(),
 		_format_play_time(float(user.get("total_play_time_seconds", 0.0)))
@@ -130,13 +150,68 @@ func _format_play_time(seconds: float) -> String:
 	return "%02d:%02d:%02d" % [hours, minutes, remaining_seconds]
 
 
-func _login_without_session(username: String, password: String) -> Dictionary:
+func _login_without_session(username: String, password: String, group_code: String) -> Dictionary:
 	if not user_data_store.has_user(username):
 		return {"ok": false, "message": "User does not exist. Create one first."}
 	if not user_data_store.validate_login(username, password):
 		return {"ok": false, "message": "Wrong password. Please try again."}
+	if not user_data_store.set_experimental_group(group_code, username):
+		return {"ok": false, "message": "\u7ec4\u522b\u4fdd\u5b58\u5931\u8d25\uff0c\u8bf7\u91cd\u8bd5\u3002"}
 	user_data_store.set_current_user(username)
 	return {"ok": true, "message": "Login success."}
+
+
+func _populate_group_select() -> void:
+	group_select.clear()
+	group_select.add_item("\u8bf7\u9009\u62e9\u5b9e\u9a8c\u7ec4\u522b")
+	group_select.set_item_metadata(0, "")
+	group_select.set_item_disabled(0, true)
+
+	for group in _get_experimental_groups():
+		var item_index := group_select.item_count
+		group_select.add_item(str(group.get("label", "")))
+		group_select.set_item_metadata(item_index, str(group.get("code", "")))
+	group_select.select(0)
+
+
+func _get_experimental_groups() -> Array:
+	if session != null and session.has_method("get_experimental_groups"):
+		return session.call("get_experimental_groups") as Array
+	return [
+		{"code": "blank_control", "label": "\u7a7a\u767d\u5bf9\u7167\u7ec4"},
+		{"code": "eeg", "label": "\u8111\u7535\u7ec4"},
+		{"code": "gesture", "label": "\u624b\u52bf\u7ec4"},
+		{"code": "gesture_eeg", "label": "\u8111\u7535+\u624b\u52bf\u7ec4"},
+	]
+
+
+func _get_selected_group_code() -> String:
+	var selected_index := group_select.selected
+	if selected_index < 0:
+		return ""
+	return str(group_select.get_item_metadata(selected_index))
+
+
+func _select_saved_group_for_username(username: String) -> void:
+	if username.is_empty() or not user_data_store.has_user(username):
+		group_select.select(0)
+		return
+
+	var saved_group: String = str(user_data_store.get_experimental_group(username))
+	for index in range(group_select.item_count):
+		if str(group_select.get_item_metadata(index)) == saved_group:
+			group_select.select(index)
+			return
+	group_select.select(0)
+
+
+func _get_group_label(group_code: String) -> String:
+	if session != null and session.has_method("get_experimental_group_label"):
+		return str(session.call("get_experimental_group_label", group_code))
+	for group in _get_experimental_groups():
+		if str(group.get("code", "")) == group_code:
+			return str(group.get("label", group_code))
+	return "\u672a\u9009\u62e9"
 
 
 func _go_to_title() -> void:
